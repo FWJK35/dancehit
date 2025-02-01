@@ -1,11 +1,12 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs";
 import Webcam from "react-webcam";
+import { setPoses, getLocations } from "../../game-logic";
 
-const PoseDetection = () => {
-  const webcamRef = useRef(null);
-  const canvasRef = useRef(null);
+const PoseDetection = (props) => {
+  const webcamRef = props.webcamRef;
+  const canvasRef = props.canvasRef;
 
   const detect = async (detector) => {
     if (
@@ -30,6 +31,7 @@ const PoseDetection = () => {
         }
       }
 
+      setPoses(poses);
       drawCanvas(poses, video, videoWidth, videoHeight, canvasRef);
     }
   };
@@ -38,7 +40,16 @@ const PoseDetection = () => {
     const ctx = canvas.current.getContext("2d");
     canvas.current.width = videoWidth;
     canvas.current.height = videoHeight;
-
+    //gameLogic.setPoses(poses);
+    console.log(getLocations());
+    Object.values(getLocations()).forEach((location) => {
+      const circleSize = 20;
+      const { x, y } = location;
+      ctx.beginPath();
+      ctx.arc(x, y, circleSize, 0, 2 * Math.PI);
+      ctx.fillStyle = "red";
+      ctx.fill();
+    });
     drawKeypoints(poses[0].keypoints, ctx);
     drawSkeleton(poses[0].keypoints, ctx);
   };
