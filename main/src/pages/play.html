@@ -1,0 +1,38 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+    <div class="container">
+        <button id="uploadSongButton" class="button">Upload Song</button>
+        <div id="videoFeed" class="video-feed"></div>
+    </div>
+    <script src="../scripts/main.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+    <div class="container">
+        <input type="file" id="audioUpload" accept="audio/mp3" hidden />
+        <button id="uploadSongButton" class="button">Upload Song</button>
+        <div id="videoFeed" class="video-feed"></div>
+        <div class="waveform-container">
+            <canvas id="waveform"></canvas>
+        </div>
+        <audio id="audioPlayer" controls></audio>
+    </div>
+    <script src="../scripts/main.js"></script>
+</body>
+</html>
