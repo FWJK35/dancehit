@@ -8,6 +8,7 @@ import "../utilities.css";
 import { socket } from "../client-socket";
 
 import { get, post } from "../utilities";
+import { OpenCvProvider } from "opencv-react";
 
 export const UserContext = createContext(null);
 
@@ -48,9 +49,11 @@ const App = () => {
   };
 
   return (
-    <UserContext.Provider value={authContextValue}>
-      <Outlet />
-    </UserContext.Provider>
+    <OpenCvProvider>
+      <UserContext.Provider value={authContextValue}>
+        <Outlet />
+      </UserContext.Provider>
+    </OpenCvProvider>
   );
 };
 
