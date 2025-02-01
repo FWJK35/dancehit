@@ -22,20 +22,16 @@ const PoseDetection = () => {
 
       const poses = await detector.estimatePoses(video);
 
+      if (poses.length > 0) {
+        const rightWrist = poses[0].keypoints.find((kp) => kp.name === "right_wrist");
+        if (rightWrist.score > 0.5) {
+          // Use rightWrist.x and rightWrist.y to control game elements
+          //updateGameState(rightWrist.x, rightWrist.y);
+        }
+      }
+
       drawCanvas(poses, video, videoWidth, videoHeight, canvasRef);
     }
-
-    const poses = await detector.estimatePoses(video);
-
-    if (poses.length > 0) {
-      const rightWrist = poses[0].keypoints.find((kp) => kp.name === "right_wrist");
-      if (rightWrist.score > 0.5) {
-        // Use rightWrist.x and rightWrist.y to control game elements
-        updateGameState(rightWrist.x, rightWrist.y);
-      }
-    }
-
-    drawCanvas(poses, video, videoWidth, videoHeight, canvasRef);
   };
 
   const drawCanvas = (poses, video, videoWidth, videoHeight, canvas) => {
