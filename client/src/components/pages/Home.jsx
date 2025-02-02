@@ -10,20 +10,22 @@ const Home = () => {
   const { userId, handleLogin, handleLogout } = useContext(UserContext);
   return (
     <>
-      <header>
-        <h1>DANCE DANCE REVOLUTION</h1>
-      </header>
-      <main>
-        <div className="button-container">
-          <a href="/game" className="button">
-            Play
-          </a>
-          <a href="/instructions" className="button">
-            Instructions
-          </a>
-        </div>
-      </main>
-      <img src={dancer} alt="Dancer" className="image-central" />
+      <div className="homeDiv">
+        <img src={dancer} alt="Dancer" className="image-lower" />
+        <header>
+          <h1 className="press-start-2p-regular">Pocket Dance</h1>
+        </header>
+        <main>
+          <div className="button-container">
+            <a href="/game" className="button press-start-2p-regular">
+              Play
+            </a>
+            <a href="/instructions" className="button press-start-2p-regular">
+              Instructions
+            </a>
+          </div>
+        </main>
+      </div>
     </>
   );
 };
