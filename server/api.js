@@ -11,7 +11,8 @@ const express = require("express");
 
 // import models so we can interact with the database
 const User = require("./models/user");
-const db = require("mongoose");
+const mongoose = require("mongoose");
+const { MongoClient, Binary } = require("mongodb");
 
 // import authentication library
 const auth = require("./auth");
@@ -87,39 +88,76 @@ router.post("/process-audio", upload.single("audio"), (req, res) => {
         return res.status(500).send("Error reading output file");
       }
       res.send({ data: data });
-      console.log(data);
+      //console.log(data);
 
       //Save the song to the database
 
-      const songDocument = {
-        name: req.file.originalname,
-        beats: JSON.parse(data),
-        data: fs.readFileSync(inputFile),
-      };
+      async function saveSmallFileToDB() {
+        const uri = process.env.MONGO_SRV;
+        const client = new MongoClient(uri);
 
-      // db.Collection("songs")
-      //   .insertOne(songDocument, (err, result) => {
-      //     if (err) {
-      //       console.error("Error saving song to database:", err);
-      //     } else {
-      //       console.log("Song saved to database");
-      //     }
-      //   })
-      //   .then((result) => {
-      //     console.log("test4");
-      //   });
+        try {
+          console.log("test3");
+          await client.connect();
+          const session = client.startSession();
+          console.log("test4");
+          const db = client.db("BeatBlast");
+          const collection = db.collection("songs");
+
+          const fileData = fs.readFileSync(inputFile);
+          const songDocument = {
+            name: req.file.originalname,
+            beats: JSON.parse(data),
+            data: new Binary(fileData),
+          };
+
+          await collection.insertOne(songDocument);
+          await session.endSession();
+          console.log("Small file saved to MongoDB");
+        } finally {
+          await client.close();
+        }
+      }
+      saveSmallFileToDB().then(() => {
+        console.log("unlinking");
+        fs.unlink(inputFile, () => {});
+        fs.unlink(outputFile, () => {});
+      });
 
       // Clean up temporary files
-      fs.unlink(inputFile, () => {});
-      fs.unlink(outputFile, () => {});
       console.log("test5");
     });
   });
   console.log("done");
 });
 
-router.get("/song", (req, res) => {
-  const song = req.query.song;
+router.get("/songs", (req, res) => {
+  console.log("get songs");
+  async function getSongs() {
+    const uri = process.env.MONGO_SRV;
+    const client = new MongoClient(uri);
+    try {
+      console.log("test1");
+      await client.connect();
+      const session = client.startSession();
+
+      console.log("test2");
+      const db = client.db("BeatBlast");
+      const collection = db.collection("songs");
+      let songs = [];
+      await (
+        await collection.find({}).toArray()
+      ).forEach((item) => {
+        songs.push(item);
+      });
+      res.send(songs);
+      console.log("test3");
+      session.endSession();
+    } finally {
+      await client.close();
+    }
+  }
+  getSongs();
 });
 
 // anything else falls to this "not found" case

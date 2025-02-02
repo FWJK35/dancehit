@@ -180,23 +180,6 @@ const PoseDetection = (props) => {
     <div>
       <Webcam ref={webcamRef} className="webcam" />
       <canvas ref={canvasRef} className="game-display" />
-
-      {/* Button to add sliding element */}
-      <button
-        onClick={addSlidingElement}
-        style={{
-          position: "absolute",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-          zIndex: 10,
-        }}
-      >
-        Add Sliding Element
-      </button>
     </div>
   );
 };
