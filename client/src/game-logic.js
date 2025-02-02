@@ -2,6 +2,10 @@ let locations = {};
 
 let poses;
 
+let songTime = 0;
+
+const fps = 60;
+
 const setPoses = (newPoses) => {
   poses = newPoses;
 };
@@ -30,6 +34,14 @@ const startCalibration = (setCountdown) => {
   }, 1000);
 };
 
+const startGame = () => {
+  console.log("Starting game");
+  songTime = 0;
+  setInterval(() => {
+    songTime += 1 / fps;
+  }, 1000 / fps);
+};
+
 const getLocations = () => {
   return locations;
 };
@@ -53,4 +65,4 @@ const getPressed = (keypoints) => {
   return pressed;
 };
 
-export { locations, setPoses, calibrate, startCalibration, getLocations, getPressed };
+export { locations, setPoses, calibrate, startCalibration, startGame, getLocations, getPressed };
