@@ -9,6 +9,10 @@ let locations = {
 
 let poses;
 
+let songTime = 0;
+
+const fps = 60;
+
 let inBox = {
   leftHandWide: false,
   rightHandWide: false,
@@ -84,6 +88,14 @@ const startCalibration = (setCountdown) => {
       console.log("Calibration complete");
     }
   }, 1000);
+};
+
+const startGame = () => {
+  console.log("Starting game");
+  songTime = 0;
+  setInterval(() => {
+    songTime += 1 / fps;
+  }, 1000 / fps);
 };
 
 const getLocations = () => {
@@ -226,4 +238,4 @@ const getPressed = (drawDot) => {
   return pressed;
 };
 
-export { setPoses, calibrate, startCalibration, getLocations, getPressed, getLen };
+export { setPoses, calibrate, startCalibration, startGame, getLocations, getPressed, getLen };

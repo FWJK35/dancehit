@@ -3,6 +3,7 @@ import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs";
 import Webcam from "react-webcam";
 import { setPoses, getLocations, getPressed, getLen } from "../../game-logic";
+import "./PoseDetection.css";
 
 const PoseDetection = (props) => {
   const webcamRef = props.webcamRef;
@@ -160,36 +161,8 @@ const PoseDetection = (props) => {
 
   return (
     <div>
-      <Webcam
-        ref={webcamRef}
-        mirrored={true} // ✅ Keeps video feed aligned with pose overlay
-        style={{
-          position: "absolute",
-          marginLeft: "auto",
-          marginRight: "auto",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          zIndex: 9,
-          width: 640,
-          height: 480,
-        }}
-      />
-
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: "absolute",
-          marginLeft: "auto",
-          marginRight: "auto",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          zIndex: 9,
-          width: 640,
-          height: 480,
-        }}
-      />
+      <Webcam ref={webcamRef} className="webcam" />
+      <canvas ref={canvasRef} className="game-display" />
     </div>
   );
 };
