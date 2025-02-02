@@ -5,6 +5,7 @@ import AudioUpload from "../modules/AudioUpload";
 import ScoreKeeper from "../modules/ScoreKeeper";
 import { startCalibration, startGame } from "../../game-logic";
 import { get } from "../../utilities";
+import "../NotFound.css";
 
 const Game = () => {
   const [countdown, setCountdown] = useState(-1);
@@ -41,7 +42,7 @@ const Game = () => {
         Start Game
       </button>
       <ScoreKeeper />
-      <button
+      {/* <button
         className="button"
         onClick={() => {
           get("/api/songs").then((songs) => {
@@ -50,7 +51,7 @@ const Game = () => {
         }}
       >
         Get Songs
-      </button>
+      </button> */}
       {countdown > 0 ? <h2>{countdown}</h2> : null}
       <AudioUpload />
       {songs ? <SongsList songs={songs} /> : null}
