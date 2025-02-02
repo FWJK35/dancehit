@@ -2,7 +2,15 @@ import React, { useEffect, useContext, useState } from "react";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs";
 import Webcam from "react-webcam";
-import { setPoses, getLocations, getPressed, getLen } from "../../game-logic";
+import {
+  setPoses,
+  getLocations,
+  getPressed,
+  updateQueue,
+  addToQueue,
+  getQueue,
+  getLen,
+} from "../../game-logic";
 import "./PoseDetection.css";
 
 const PoseDetection = (props) => {
@@ -25,12 +33,15 @@ const PoseDetection = (props) => {
       const poses = await detector.estimatePoses(video);
 
       setPoses(poses);
+      // updateQueue();
       drawCanvas(poses, video, videoWidth, videoHeight, canvasRef);
     }
   };
 
   const drawCanvas = (poses, video, videoWidth, videoHeight, canvas) => {
     const ctx = canvas.current.getContext("2d");
+    getPressed();
+    updateQueue();
 
     // ✅ Save original state before transformations
     ctx.save();
@@ -75,8 +86,8 @@ const PoseDetection = (props) => {
       );
     });
 
-    getPressed((x, y) => {
-      drawDot(ctx, x, y);
+    getQueue().forEach((item) => {
+      drawRectangle(ctx, item.curX - 10, 300 - 10, 20, 20);
     });
 
     if (poses.length > 0) {
@@ -116,13 +127,6 @@ const PoseDetection = (props) => {
     ctx.stroke();
   };
 
-  const drawDot = (ctx, x, y, color = "blue") => {
-    ctx.beginPath();
-    ctx.arc(x, y, 20, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
-    ctx.fill();
-  };
-
   const drawSkeleton = (keypoints, ctx, videoWidth) => {
     const connections = poseDetection.util.getAdjacentPairs(
       poseDetection.SupportedModels.BlazePose
@@ -159,10 +163,31 @@ const PoseDetection = (props) => {
     runPoseDetection();
   }, []);
 
+  const addSlidingElement = () => {
+    addToQueue();
+  };
+
   return (
     <div>
       <Webcam ref={webcamRef} className="webcam" />
       <canvas ref={canvasRef} className="game-display" />
+
+      {/* Button to add sliding element */}
+      <button
+        onClick={addSlidingElement}
+        style={{
+          position: "absolute",
+          bottom: "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: "pointer",
+          zIndex: 10,
+        }}
+      >
+        Add Sliding Element
+      </button>
     </div>
   );
 };

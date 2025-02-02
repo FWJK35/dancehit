@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import Webcam from "react-webcam";
 
-const OverLay = () => {
+const OverLay = (props) => {
   const webcamRef = useRef(null);
   const [showElement, setShowElement] = useState(false);
 

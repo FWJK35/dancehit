@@ -11,6 +11,8 @@ let poses;
 
 let songTime = 0;
 
+let noteQueue = [];
+
 const fps = 60;
 
 let inBox = {
@@ -102,24 +104,28 @@ const getLocations = () => {
   return locations;
 };
 
+const addToQueue = () => {
+  noteQueue.push({ curX: 0, finX: 300, noteType: "left" });
+};
+
+const getQueue = () => {
+  return noteQueue;
+};
+
+const updateQueue = () => {
+  noteQueue.forEach((element, index) => {
+    if (element.curX > element.finX) {
+      noteQueue.splice(index, index + 1);
+    } else {
+      console.log("we in that b");
+      element.curX += 2;
+    }
+  });
+};
+
 const getPressed = (drawDot) => {
   const pressed = {};
   const keypoints = poses[0].keypoints;
-  // Object.values(locations).forEach((location) => {
-  //   //If keypoint is found and strong enough
-  //   const thisKp = keypoints.find((kp) => kp.name === location.name);
-  //   if (thisKp.score > 0.5) {
-  //     const distance = Math.sqrt(
-  //       Math.pow(location.x - thisKp.x, 2) + Math.pow(location.y - thisKp.y, 2)
-  //     );
-  //     if (distance < 50) {
-  //       drawDot(this);
-  //       return (pressed[location.name] = true);
-  //     } else {
-  //       return (pressed[location.name] = false);
-  //     }
-  //   }
-  // });
 
   if (poses.length > 0) {
     const rightWrist = poses[0].keypoints.find((kp) => kp.name === "right_wrist");
@@ -216,6 +222,14 @@ const getPressed = (drawDot) => {
       rectLen,
     ]);
 
+    // console.log(
+    //   arePointsInSquare(leftHand, [lhux - rectLen / 2, lhuy - rectLen / 2, rectLen, rectLen])
+    // );
+
+    // console.log(
+    //   arePointsInSquare(rightHand, [rhux - rectLen / 2, rhuy - rectLen / 2, rectLen, rectLen])
+    // );
+
     Object.entries(inBox).forEach((point) => {
       if (inBox[point]) {
         drawDot(locations[point]);
@@ -226,4 +240,15 @@ const getPressed = (drawDot) => {
   return pressed;
 };
 
-export { setPoses, calibrate, startCalibration, startGame, getLocations, getPressed, getLen };
+export {
+  setPoses,
+  calibrate,
+  startCalibration,
+  startGame,
+  getLocations,
+  getPressed,
+  getLen,
+  getQueue,
+  addToQueue,
+  updateQueue,
+};
