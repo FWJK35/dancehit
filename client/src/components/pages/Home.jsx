@@ -9,16 +9,17 @@ const Home = () => {
   const { userId, handleLogin, handleLogout } = useContext(UserContext);
   return (
     <>
-      <div class="button-container">
-        <a href="/game" class="button">
-          Play
-        </a>
-        <a href="/instructions" class="button">
-          Instructions
-        </a>
-        <a href="/game">To video feed thing</a>
-      </div>
-    </>
+        <header>
+          <h1>DANCE DANCE REVOLUTION</h1>
+        </header>
+        <main>
+            <div class="button-container">
+                <a href="src/pages/play.html" class="button">Play</a>
+                <a href="src/pages/instructions.html" class="button">Instructions</a>
+            </div>
+        </main>
+        <img src="C:\Users\aksha\Downloads\New Piskel (8).png" alt="Dancer" class="image-central"/>
+        </>
   );
 };
 
