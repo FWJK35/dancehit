@@ -119,12 +119,18 @@ def generate_ddr_steps_with_peaks(audio_file: str,
 ##############################
 if __name__ == "__main__":
     # Replace with your audio file path.
-    audio_file = "Songs/Coldplay - A Sky Full Of Stars (Official audio).mp3"
+    print("Running process_audio.py...")
+    if len(sys.argv) != 3:
+        print("Usage: python process_audio.py <input_file> <output_file>")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
     
     # 1. Detect peaks.
     window_duration = 5.0  # seconds
     overall_avg, threshold, times, rms, peak_times, peak_indices = detect_peaks_by_window(
-        audio_file,
+        input_file,
         hop_length=512,
         window_duration=window_duration,
         threshold_multiplier=1.5
@@ -146,14 +152,13 @@ if __name__ == "__main__":
     # (For example: 1 number: 10%, 2 numbers: 40%, 3 numbers: 50%)
     # Outside peaks, use the default: (1: 30%, 2: 50%, 3: 20%)
     ddr_moves = generate_ddr_steps_with_peaks(
-        audio_file,
+        input_file,
         peak_intervals,
         default_weights=(0.3, 0.5, 0.2),
         peak_weights=(0.1, 0.4, 0.5)
     )
     
     # Optionally, write the DDR moves dictionary to a JSON file.
-    output_file = "DDR_moves.txt"
     with open(output_file, "w") as f:
         json.dump(ddr_moves, f, indent=4)
     
