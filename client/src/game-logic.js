@@ -22,6 +22,7 @@ let gameScore = 0;
 
 let songTime = 0;
 let beatMap = [];
+let songName = "";
 
 let noteQueue = [];
 
@@ -49,6 +50,14 @@ const rectLen = 100;
 
 const getLen = () => {
   return rectLen;
+};
+
+const setSongName = (newSongName) => {
+  songName = newSongName;
+};
+
+const getSongName = () => {
+  return songName;
 };
 
 const getGameScore = () => {
@@ -475,4 +484,6 @@ export {
   getGameStarted,
   getFPS,
   getGameScore,
+  setSongName,
+  getSongName,
 };

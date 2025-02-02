@@ -32,12 +32,17 @@ const Game = () => {
 
   return (
     <div>
-      <h1>My Pose-Controlled Game</h1>
+      <h1>Pocket Dance</h1>
       <PoseDetection canvasRef={canvasRef} webcamRef={webcamRef} />
-      <button className="button" onClick={handleStartCalibration} >Start Calibration</button>
-      <button className="button" onClick={handleGameStart} >Start Game</button>
+      <button className="button" onClick={handleStartCalibration}>
+        Start Calibration
+      </button>
+      <button className="button" onClick={handleGameStart}>
+        Start Game
+      </button>
       <ScoreKeeper />
-      <button className="button"
+      <button
+        className="button"
         onClick={() => {
           get("/api/songs").then((songs) => {
             console.log(songs);
@@ -45,7 +50,7 @@ const Game = () => {
         }}
       >
         Get Songs
-      </button >
+      </button>
       {countdown > 0 ? <h2>{countdown}</h2> : null}
       <AudioUpload />
       {songs ? <SongsList songs={songs} /> : null}
