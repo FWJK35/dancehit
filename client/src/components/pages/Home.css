@@ -174,4 +174,20 @@ h1 {
 
 li {
   font-size: 240px; /* Adjust the size as needed */
+  list-style-type: none;
+}
+
+.song {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fb00ff;
+  background-color: #1a1a1a;
+}
+
+.song :hover {
+  color: #4b0082;
+}
+
+.selected {
+  background-color: #4b0082;
 }
