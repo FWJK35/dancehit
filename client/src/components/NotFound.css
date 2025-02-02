@@ -4,7 +4,7 @@
 }
 
 body {
-  font-family: "Press Start 2P", cursive; /* Set your custom font globally */
+  font-family: "Press Start 2P", cursive; /* or your chosen custom font */
   margin: 0;
   padding: 0;
   background-color: #000;
@@ -15,32 +15,29 @@ body {
   min-height: 100vh;
 }
 
-/* A container to center content and limit width */
+/* Container for centering content */
 .container {
   width: 100%;
   max-width: 800px;
-  padding: 20px;
   margin: 0 auto;
+  padding: 20px;
 }
 
-/* Header styles */
+/* Header */
 h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
   text-align: center;
+  margin-bottom: 1rem;
 }
 
-/* Button Container */
+/* Button styles */
 .button-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  /* Reduce margin below button container to lessen the gap between score and buttons */
-  margin-bottom: 10px;
+  margin-bottom: 10px;  /* reduced margin to bring buttons closer to the score */
 }
 
-/* Button styles */
 .button {
   background-color: #fb00ff;
   color: #fff;
@@ -50,7 +47,6 @@ h1 {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  text-decoration: none;
   transition: background-color 0.3s ease;
 }
 
@@ -58,13 +54,30 @@ h1 {
   background-color: #4b0082;
 }
 
-/* Example styling for the ScoreKeeper component (if you have a wrapping class) */
-.score {
-  /* Reduce any bottom margin to bring it closer to the buttons */
-  margin-bottom: 10px;
+/* Calibration/pose detection container */
+.calibration-container {
+  /* Using relative positioning to allow children to position naturally */
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;  /* centers the container */
+  padding: 10px;
+  border: 2px dashed #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Additional shared styles for other components, as needed */
+/* Calibration canvas or video feed */
+.calibration-element {
+  /* Remove absolute positioning so that it participates in document flow */
+  position: relative; /* or simply omit position if not needed */
+  width: 100%;
+  height: auto;  /* let the content define its height or set a fixed value if required */
+  border: 2px solid #4b0082;
+}
+
+/* Other shared elements */
 .video-feed,
 .instructions-space {
   width: 100%;
@@ -78,19 +91,6 @@ h1 {
   color: #999;
 }
 
-.waveform-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 20px auto;
-}
-
-#waveform {
-  width: 100%;
-  height: 150px;
-  background: #1a1a1a;
-  border-radius: 8px;
-  border: 2px solid #fb00ff;
-}
 
 #audioPlayer {
   width: 100%;
