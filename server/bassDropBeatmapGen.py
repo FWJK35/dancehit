@@ -84,10 +84,8 @@ if __name__ == "__main__":
     # Write the DDR moves to a plain text file.
     with open(output_file, "w") as f:
         # Sort the beats to keep the output in chronological order.
-        for beat_time in sorted(beat_steps.keys()):
-            moves = beat_steps[beat_time]
-            # Format the beat time to 2 decimal places.
-            f.write(f"{beat_time:.2f}s -> {moves}\n")
+        json.dump(beat_steps, f, indent=4)
+        
     
     # print(f"DDR moves written to {output_file}")
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { setAudio, setBeatMap, getSongName, setSongName } from "../../game-logic";
+import "../pages/Home.css";
 
 const SongsList = (props) => {
   return (

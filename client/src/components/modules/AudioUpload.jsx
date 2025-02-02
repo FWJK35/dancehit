@@ -51,15 +51,11 @@ const AudioUpload = (props) => {
     <div>
       <h1>Audio File Processor</h1>
       <form onSubmit={handleSubmit}>
-        <input className = "button" type="file" accept="audio/*" onChange={handleFileChange} />
-        <button className="button" type="submit">Process Audio</button>
+        <input className="button" type="file" accept="audio/*" onChange={handleFileChange} />
+        <button className="button" type="submit">
+          Process Audio
+        </button>
       </form>
-      {output && (
-        <div>
-          <h3>Output:</h3>
-          <pre>{output}</pre>
-        </div>
-      )}
     </div>
   );
 };

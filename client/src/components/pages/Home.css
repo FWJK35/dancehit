@@ -172,12 +172,10 @@ h1 {
   pointer-events: none;
 }
 
-<<<<<<< HEAD
 .instructions-content {
   max-width: 400px;
   font-size: 200px;
 }
-=======
 li {
   font-size: 240px; /* Adjust the size as needed */
   list-style-type: none;
@@ -197,4 +195,3 @@ li {
 .selected {
   background-color: #4b0082;
 }
->>>>>>> 62a3a0caadeb375967547b1dc8673d9538ece5bd
