@@ -14,6 +14,7 @@ const SongsList = (props) => {
               setAudio(song.data);
               console.log(song);
             }}
+            className={"song" + (props.currentSong === song.name ? " selected" : "")}
           >
             {song.name}
           </li>

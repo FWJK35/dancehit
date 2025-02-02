@@ -172,7 +172,29 @@ h1 {
   pointer-events: none;
 }
 
+<<<<<<< HEAD
 .instructions-content {
   max-width: 400px;
   font-size: 200px;
 }
+=======
+li {
+  font-size: 240px; /* Adjust the size as needed */
+  list-style-type: none;
+}
+
+.song {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fb00ff;
+  background-color: #1a1a1a;
+}
+
+.song :hover {
+  color: #4b0082;
+}
+
+.selected {
+  background-color: #4b0082;
+}
+>>>>>>> 62a3a0caadeb375967547b1dc8673d9538ece5bd
