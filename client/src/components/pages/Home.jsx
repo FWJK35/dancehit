@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
-import dancer from "client/src/dancer.png";
+import dancer from "../dancer.png";
 
 import "../../utilities.css";
 import "./Home.css";
@@ -23,7 +23,7 @@ const Home = () => {
           </a>
         </div>
       </main>
-      <img src="client/src/public/dancer.png" alt="Dancer" className="image-central" />
+      <img src={dancer} alt="Dancer" className="image-central" />
     </>
   );
 };
