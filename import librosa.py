@@ -1,101 +1,72 @@
 import librosa
-import librosa.display
 import numpy as np
-import matplotlib.pyplot as plt
 import random
 
-def generate_ddr_steps(audio_file: str, bpm_threshold: int = 120):
-    # Load the audio file and extract waveform data and sample rate
+def generate_ddr_steps(audio_file: str) -> dict:
+    """
+    Processes the given audio file to detect beats and generates for each beat a list
+    of numbers (from the set [-3, -2, -1, 0, 1, 2, 3]) according to the following length
+    distribution:
+        - 1 number: 30% chance
+        - 2 numbers: 50% chance
+        - 3 numbers: 20% chance
+
+    Additionally:
+        - No number is repeated in any generated list.
+        - The list must not contain both -2 and -3 or both 2 and 3 simultaneously.
+    
+    Returns:
+        A dictionary mapping each beat timestamp (in seconds) to a list of numbers.
+    """
+    # Load the audio file and extract waveform data and sample rate.
     y, sr = librosa.load(audio_file, sr=None)
     
-    # Detect beats in the audio file
+    # Detect beats in the audio file.
     tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
     
-    # Ensure tempo is a single numerical value (handling NumPy array output)
-    if isinstance(tempo, np.ndarray):
-        tempo = tempo[0] if tempo.size > 0 else 0
-    
-    # Convert beat frames to actual time values (in seconds)
+    # Convert beat frames to actual time values (in seconds).
     beat_times = librosa.frames_to_time(beat_frames, sr=sr)
     
-    # Define DDR step choices (Up, Down, Left, Right)
-    ddr_moves = ['⬆️', '⬇️', '⬅️', '➡️']
+    # Define the pool of possible numbers.
+    possible_numbers = [-3, -2, -1, 0, 1, 2, 3]
     
-    # Extract spectral features to influence DDR steps
-    rms = librosa.feature.rms(y=y)[0]  # Root Mean Square (Energy)
-    spectral_centroid = librosa.feature.spectral_centroid(y=y, sr=sr)[0]  # Brightness
+    # Define the probabilities for list lengths:
+    # 1 number: 30%, 2 numbers: 50%, 3 numbers: 20%.
+    length_choices = [1, 2, 3]
+    length_weights = [0.3, 0.5, 0.2]
     
-    # Normalize features
-    rms = (rms - np.min(rms)) / (np.max(rms) - np.min(rms))
-    spectral_centroid = (spectral_centroid - np.min(spectral_centroid)) / (np.max(spectral_centroid) - np.min(spectral_centroid))
-    
-    # Generate DDR steps based on detected beats and audio features
-    ddr_steps = []
-    for i, beat in enumerate(beat_times):
-        index = min(i, len(rms) - 1)
-        energy = rms[index]
-        brightness = spectral_centroid[index]
-        
-        steps = []
-        
-        # **Move Selection Logic**
-        if energy > 0.8:
-            # High energy = rapid, strong moves (3-4 moves at a time)
-            steps = random.sample(ddr_moves, k=random.choice([3, 4]))
-        elif energy > 0.6:
-            # Moderate energy = 2 moves per beat
-            steps = random.sample(ddr_moves, k=2)
-        elif energy > 0.4:
-            # Lower energy = 1 move per beat
-            steps = [random.choice(ddr_moves)]
-        else:
-            # Low energy = occasional steps, mostly rests
-            steps = [random.choice(ddr_moves)] if random.random() > 0.5 else []
-        
-        # Add variation based on brightness
-        if brightness > 0.7:
-            steps.append('➡️') if '➡️' not in steps else None  # Bias towards rightward movement
-        elif brightness < 0.1:
-            steps.append('⬅️') if '⬅️' not in steps else None  # Bias towards leftward movement
-        
-        # Ensure unique moves (no duplicate moves in a single beat)
-        steps = list(set(steps))
+    # Helper function to check if a list violates the constraint.
+    def violates_constraint(num_list):
+        # Cannot have both 2 and 3.
+        if 2 in num_list and 3 in num_list:
+            return True
+        # Cannot have both -2 and -3.
+        if -2 in num_list and -3 in num_list:
+            return True
+        return False
 
-        ddr_steps.append((beat, steps))
+    # Generate the hashmap with beat timestamps as keys and the corresponding list of numbers as values.
+    steps_dict = {}
+    for beat in beat_times:
+        # Choose how many numbers to generate for this beat.
+        list_length = random.choices(length_choices, weights=length_weights, k=1)[0]
+        # Use random.sample to ensure no repeats; re-sample if the list violates the constraint.
+        while True:
+            step_numbers = random.sample(possible_numbers, list_length)
+            if not violates_constraint(step_numbers):
+                break
+        steps_dict[beat] = step_numbers
     
-    return tempo, ddr_steps
-
-def visualize_ddr_steps(ddr_steps):
-    # Extract beat times and corresponding DDR steps
-    times, steps = zip(*ddr_steps)
-    
-    # Create a plot to visualize DDR steps
-    plt.figure(figsize=(10, 4))
-    plt.eventplot(times, orientation='horizontal', linelengths=0.8, color='b')
-    
-    # Annotate the steps on the visualization
-    for i, (time, step) in enumerate(ddr_steps):
-        plt.text(time, 1, ''.join(step), fontsize=12, ha='center', va='center')
-    
-    # Label the axes and title
-    plt.xlabel("Time (seconds)")
-    plt.ylabel("DDR Steps")
-    plt.title("DDR Step Chart")
-    plt.grid()
-    plt.show()
+    return steps_dict
 
 if __name__ == "__main__":
-    # Specify the path to the audio file to analyze
-    audio_path = "C:/Users/aksha/Downloads/Coldplay - A Sky Full Of Stars (Official audio).mp3" # Replace with your audio file path
+    # Specify the path to the audio file to analyze.
+    audio_path = "Songs/Travis Scott - FE!N ft. Playboi Carti.mp3"  # Replace with your audio file path
     
-    # Generate DDR steps based on the detected beat pattern
-    tempo, ddr_steps = generate_ddr_steps(audio_path)
+    # Generate the beat-to-number mapping.
+    beat_steps = generate_ddr_steps(audio_path)
     
-    # Display the detected tempo and corresponding DDR steps
-    print(f"Detected Tempo: {float(tempo):.2f} BPM")
-    print("DDR Steps:")
-    for beat, steps in ddr_steps:
-        print(f"{beat:.2f}s -> {', '.join(steps)}")
-    
-    # Visualize the DDR steps in a timeline
-    visualize_ddr_steps(ddr_steps)
+    # Print the resulting hashmap.
+    print("Beat timestamps and corresponding number lists:")
+    for timestamp, numbers in beat_steps.items():
+        print(f"{timestamp:.2f}s -> {numbers}")
