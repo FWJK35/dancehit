@@ -71,7 +71,7 @@ const playAudioFromBytes = () => {
   console.log("playing audio");
   // Decode the base64 string
   const decodedData = atob(audio);
-
+  console.log(beatMap);
   // Convert the decoded string to a Uint8Array
   const arrayBuffer = new ArrayBuffer(decodedData.length);
   const uint8Array = new Uint8Array(arrayBuffer);
@@ -160,15 +160,12 @@ const startCalibration = (setCountdown) => {
 };
 
 const startGame = () => {
-  console.log("Starting bame");
-
   gameStarted = true;
   console.log(gameStarted);
   songTime = 0;
   setInterval(() => {
     songTime += 1 / fps;
   }, 1000 / fps);
-  console.log("playing audio");
 
   setTimeout(() => {
     playAudioFromBytes();

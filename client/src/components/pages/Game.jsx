@@ -25,7 +25,6 @@ const Game = () => {
   const handleGameStart = () => {
     startGame();
     console.log("Starting game");
-    startGame();
   };
 
   const canvasRef = useRef(null);
