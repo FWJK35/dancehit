@@ -14,7 +14,9 @@ let audio;
 let poses;
 let gameStarted = false;
 
-const threshold = 20;
+const offset = 2;
+
+const threshold = 0.5;
 
 let gameScore = 0;
 
@@ -161,6 +163,7 @@ const startGame = () => {
   console.log("Starting bame");
 
   gameStarted = true;
+  console.log(gameStarted);
   songTime = 0;
   setInterval(() => {
     songTime += 1 / fps;
@@ -185,20 +188,21 @@ const getBeatMap = () => {
 };
 
 const getOffset = () => {
-  return 2;
+  return offset;
 };
 
 const getLocations = () => {
   return locations;
 };
 
-const addToQueue = (noteType, screenHeight) => {
+const addToQueue = (noteType, screenHeight, timeToPoint) => {
   if (noteType === "rightFoot") {
     noteQueue.push({
       curX: locations["rightFoot"].x,
       curY: screenHeight,
       finY: locations["rightFoot"].y,
       noteType: "rightFoot",
+      TimeToPoint: timeToPoint,
     });
   } else if (noteType === "rightHandWide") {
     noteQueue.push({
@@ -206,6 +210,7 @@ const addToQueue = (noteType, screenHeight) => {
       curY: 0,
       finY: locations["rightHandWide"].y,
       noteType: "rightHandWide",
+      TimeToPoint: timeToPoint,
     });
   } else if (noteType === "rightHandUp") {
     noteQueue.push({
@@ -213,6 +218,7 @@ const addToQueue = (noteType, screenHeight) => {
       curY: 0,
       finY: locations["rightHandUp"].y,
       noteType: "rightHandUp",
+      TimeToPoint: timeToPoint,
     });
   } else if (noteType === "leftFoot") {
     noteQueue.push({
@@ -220,6 +226,7 @@ const addToQueue = (noteType, screenHeight) => {
       curY: screenHeight,
       finY: locations["leftFoot"].y,
       noteType: "leftFoot",
+      TimeToPoint: timeToPoint,
     });
   } else if (noteType === "leftHandWide") {
     noteQueue.push({
@@ -227,6 +234,7 @@ const addToQueue = (noteType, screenHeight) => {
       curY: 0,
       finY: locations["leftHandWide"].y,
       noteType: "leftHandWide",
+      TimeToPoint: timeToPoint,
     });
   } else if (noteType === "leftHandUp") {
     noteQueue.push({
@@ -234,6 +242,7 @@ const addToQueue = (noteType, screenHeight) => {
       curY: 0,
       finY: locations["leftHandUp"].y,
       noteType: "leftHandUp",
+      TimeToPoint: timeToPoint,
     });
   }
 };
@@ -246,40 +255,40 @@ const updateQueue = () => {
   // console.log(noteQueue);
   noteQueue.forEach((element, index) => {
     if (element.noteType === "rightFoot") {
-      if (element.curY < element.finY) {
+      if (element.TimeToPoint < 0.0) {
         noteQueue.splice(index, index + 1);
       } else {
-        element.curY -= 2;
+        element.TimeToPoint -= 0.05;
       }
     } else if (element.noteType === "rightHandWide") {
-      if (element.curY > element.finY) {
+      if (element.TimeToPoint < 0.0) {
         noteQueue.splice(index, index + 1);
       } else {
-        element.curY += 2;
+        element.TimeToPoint -= 0.05;
       }
     } else if (element.noteType === "rightHandUp") {
-      if (element.curY > element.finY) {
+      if (element.TimeToPoint < 0.0) {
         noteQueue.splice(index, index + 1);
       } else {
-        element.curY += 2;
+        element.TimeToPoint -= 0.05;
       }
     } else if (element.noteType === "leftFoot") {
-      if (element.curY < element.finY) {
+      if (element.TimeToPoint < 0.0) {
         noteQueue.splice(index, index + 1);
       } else {
-        element.curY -= 2;
+        element.TimeToPoint -= 0.05;
       }
     } else if (element.noteType === "leftHandWide") {
-      if (element.curY > element.finY) {
+      if (element.TimeToPoint < 0.0) {
         noteQueue.splice(index, index + 1);
       } else {
-        element.curY += 2;
+        element.TimeToPoint -= 0.05;
       }
     } else if (element.noteType === "leftHandUp") {
-      if (element.curY > element.finY) {
+      if (element.TimeToPoint < 0.0) {
         noteQueue.splice(index, index + 1);
       } else {
-        element.curY += 2;
+        element.TimeToPoint -= 0.05;
       }
     }
   });
@@ -348,7 +357,7 @@ const getPressed = (drawDot) => {
 
     // last set = current set
 
-    lastCycleIn = currentlyIn;
+    lastCycleIn = Object.assign({}, currentlyIn);
 
     // current set update
 
@@ -392,12 +401,25 @@ const getPressed = (drawDot) => {
     // check through queue
 
     // score adding code
-    Object.keys(noteQueue).forEach((note) => {
+    // console.log(gameScore);
+
+    // Iterate through all notes currently in the queue
+    noteQueue.forEach((note) => {
+      // Iterate through all movement zones (left hand, right foot, etc.)
       Object.keys(currentlyIn).forEach((squareIn) => {
-        if (currentlyIn[squareIn] !== lastCycleIn[currentlyIn]) {
-          if (squareIn === note) {
-            if (Math.abs(noteQueue[note].finY - noteQueue[note].curY) < threshold) {
+        // Check if the player has just entered or exited a movement zone
+        if (currentlyIn[squareIn] !== lastCycleIn[squareIn] && currentlyIn[squareIn] === true) {
+          // Check if the movement zone corresponds to the note's required action
+          if (squareIn === note.noteType) {
+            // <-- FIX: Use note.noteType instead of note
+            // console.log(note.TimeToPoint);
+            // Check if the note is close enough to the target position for a successful hit
+            if (Math.abs(note.TimeToPoint) < threshold) {
+              // <-- FIX: Directly access note properties
+
+              // Increment the score for a correct move
               gameScore++;
+              console.log("GAME SCORE UPDATED YUR BRODIE " + String(gameScore));
             }
           }
         }
