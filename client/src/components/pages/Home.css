@@ -14,6 +14,12 @@ body {
   color: white;
 }
 
+.press-start-2p-regular {
+  font-family: "Press Start 2P", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 h1 {
   text-align: center;
   color: white;
@@ -30,6 +36,23 @@ h1 {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+.homeDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center everything horizontally */
+  justify-content: center; /* Center everything vertically */
+  padding: 10vh 5%; /* Top padding for centering */
+  gap: 20px; /* Space between elements */
+  text-align: center; /* Center text */
+}
+
+.image-lower {
+  max-width: 40%;
+  max-height: 40%;
+  display: block;
+  padding-top: 30%;
 }
 
 .button-container {
@@ -113,11 +136,11 @@ h1 {
   line-height: 1.5;
 }
 
-.instructions-content span[role="img"] {
+/* .instructions-content span[role="img"] {
   display: block;
   font-size: 30px;
   margin-bottom: 10px;
-}
+} */
 
 /* Modify waveform container
 .waveform-container {
@@ -147,4 +170,8 @@ h1 {
   background-color: #4b0082;
   mix-blend-mode: lighten;
   pointer-events: none;
+}
+
+li {
+  font-size: 240px; /* Adjust the size as needed */
 }
