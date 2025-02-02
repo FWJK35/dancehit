@@ -9,6 +9,8 @@ let locations = {
   leftHandUp: { x: 0, y: 0 },
 };
 
+let audio;
+
 let poses;
 let gameStarted = false;
 
@@ -57,6 +59,45 @@ const getFPS = () => {
 
 const setPoses = (newPoses) => {
   poses = newPoses;
+};
+
+const setAudio = (newAudio) => {
+  audio = newAudio;
+};
+
+const playAudioFromBytes = () => {
+  console.log("playing audio");
+  // Decode the base64 string
+  const decodedData = atob(audio);
+
+  // Convert the decoded string to a Uint8Array
+  const arrayBuffer = new ArrayBuffer(decodedData.length);
+  const uint8Array = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < decodedData.length; i++) {
+    uint8Array[i] = decodedData.charCodeAt(i);
+  }
+
+  // Create an audio context
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+  // Decode the audio data
+  audioContext.decodeAudioData(
+    arrayBuffer,
+    (buffer) => {
+      // Create a source node
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+
+      // Connect the source to the audio context's destination (speakers)
+      source.connect(audioContext.destination);
+
+      // Play the audio
+      source.start(0);
+    },
+    (error) => {
+      console.error("Error decoding audio data:", error);
+    }
+  );
 };
 
 const arePointsInSquare = (points, square) => {
@@ -117,12 +158,18 @@ const startCalibration = (setCountdown) => {
 };
 
 const startGame = () => {
-  console.log("Starting game");
+  console.log("Starting bame");
+
   gameStarted = true;
   songTime = 0;
   setInterval(() => {
     songTime += 1 / fps;
   }, 1000 / fps);
+  console.log("playing audio");
+
+  setTimeout(() => {
+    playAudioFromBytes();
+  }, getOffset() * 1000);
 };
 
 const getGameStarted = () => {
@@ -395,6 +442,7 @@ export {
   calibrate,
   startCalibration,
   startGame,
+  setAudio,
   getLocations,
   getPressed,
   getLen,

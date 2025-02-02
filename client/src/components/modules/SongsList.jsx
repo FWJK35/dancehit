@@ -1,5 +1,5 @@
 import React from "react";
-import { setBeatMap } from "../../game-logic";
+import { setAudio, setBeatMap } from "../../game-logic";
 
 const SongsList = (props) => {
   return (
@@ -11,6 +11,8 @@ const SongsList = (props) => {
             key={song._id}
             onClick={() => {
               setBeatMap(song.beats);
+              setAudio(song.data);
+              console.log(song);
             }}
           >
             {song.name}

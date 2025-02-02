@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-// import "./AudioUpload.css";
-// import axios from "axios";
-import { post } from "../../utilities";
-import { setBeatMap } from "../../game-logic";
+import "./AudioUpload.css";
+import { setBeatMap, setAudio } from "../../game-logic";
 
 const AudioUpload = (props) => {
   const [file, setFile] = useState(null);
@@ -38,8 +36,10 @@ const AudioUpload = (props) => {
           throw new Error("Error processing audio file");
         })
         .then((data) => {
+          console.log(data);
           setOutput(data.data);
           setBeatMap(JSON.parse(data.data));
+          setAudio(data);
         });
     } catch (error) {
       console.error("Error processing audio:", error);
