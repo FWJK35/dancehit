@@ -32,27 +32,27 @@ let arrows = {
   },
   leftHandWide: {
     id: "leftHandWide",
-    src: leftArrow,
+    src: rightArrow,
     size: 192,
   },
   leftFoot: {
     id: "leftFoot",
-    src: upArrow,
+    src: rightArrow,
     size: 192,
   },
   rightFoot: {
     id: "rightFoot",
-    src: upArrow,
+    src: leftArrow,
     size: 192,
   },
   rightHandWide: {
     id: "rightHandWide",
-    src: rightArrow,
+    src: leftArrow,
     size: 192,
   },
   rightHandUp: {
     id: "rightHandUp",
-    src: upArrow,
+    src: downArrow,
     size: 192,
   },
 };
@@ -163,9 +163,11 @@ const PoseDetection = (props) => {
       console.log(item);
       ctx.drawImage(
         arrows[item.noteType].imgObj,
-        item.curX - getLen() / 2,
+        item.curX +
+          ((item.finX - item.curX) * (getOffset() - item.TimeToPoint)) / getOffset() -
+          getLen() / 2,
         item.curY +
-          (Math.abs(item.curY - item.finY) * (getOffset() - item.TimeToPoint)) / getOffset() -
+          ((item.finY - item.curY) * (getOffset() - item.TimeToPoint)) / getOffset() -
           getLen() / 2,
         getLen(),
         getLen()
@@ -198,17 +200,17 @@ const PoseDetection = (props) => {
 
           actions.forEach((action) => {
             if (action === -3) {
-              addToQueue("leftHandUp", window.innerHeight, offset);
+              addToQueue("leftHandUp", window.innerHeight, window.innerWidth, offset);
             } else if (action === -2) {
-              addToQueue("leftHandWide", window.innerHeight, offset);
+              addToQueue("leftHandWide", window.innerHeight, window.innerWidth, offset);
             } else if (action === -1) {
-              addToQueue("leftFoot", window.innerHeight, offset);
+              addToQueue("leftFoot", window.innerHeight, window.innerWidth, offset);
             } else if (action === 1) {
-              addToQueue("rightFoot", window.innerHeight, offset);
+              addToQueue("rightFoot", window.innerHeight, window.innerWidth, offset);
             } else if (action === 2) {
-              addToQueue("rightHandWide", window.innerHeight, offset);
+              addToQueue("rightHandWide", window.innerHeight, window.innerWidth, offset);
             } else if (action === 3) {
-              addToQueue("rightHandUp", window.innerHeight, offset);
+              addToQueue("rightHandUp", window.innerHeight, window.innerWidth, offset);
             }
           });
         }

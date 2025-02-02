@@ -201,11 +201,12 @@ const getLocations = () => {
   return locations;
 };
 
-const addToQueue = (noteType, screenHeight, timeToPoint) => {
+const addToQueue = (noteType, screenHeight, screenWidth, timeToPoint) => {
   if (noteType === "rightFoot") {
     noteQueue.push({
-      curX: locations["rightFoot"].x,
-      curY: screenHeight,
+      curX: 0,
+      curY: locations["rightFoot"].y,
+      finX: locations["rightFoot"].x,
       finY: locations["rightFoot"].y,
       noteType: "rightFoot",
       TimeToPoint: timeToPoint,
@@ -213,23 +214,26 @@ const addToQueue = (noteType, screenHeight, timeToPoint) => {
   } else if (noteType === "rightHandWide") {
     noteQueue.push({
       curX: locations["rightHandWide"].x,
-      curY: 0,
+      curY: screenHeight,
+      finX: locations["rightHandWide"].x,
       finY: locations["rightHandWide"].y,
       noteType: "rightHandWide",
       TimeToPoint: timeToPoint,
     });
   } else if (noteType === "rightHandUp") {
     noteQueue.push({
-      curX: locations["rightHandUp"].x,
+      curX: 0,
       curY: 0,
+      finX: locations["rightHandUp"].x,
       finY: locations["rightHandUp"].y,
       noteType: "rightHandUp",
       TimeToPoint: timeToPoint,
     });
   } else if (noteType === "leftFoot") {
     noteQueue.push({
-      curX: locations["leftFoot"].x,
-      curY: screenHeight,
+      curX: screenWidth,
+      curY: locations["leftFoot"].y,
+      finX: locations["leftFoot"].x,
       finY: locations["leftFoot"].y,
       noteType: "leftFoot",
       TimeToPoint: timeToPoint,
@@ -237,15 +241,17 @@ const addToQueue = (noteType, screenHeight, timeToPoint) => {
   } else if (noteType === "leftHandWide") {
     noteQueue.push({
       curX: locations["leftHandWide"].x,
-      curY: 0,
+      curY: screenHeight,
+      finX: locations["leftHandWide"].x,
       finY: locations["leftHandWide"].y,
       noteType: "leftHandWide",
       TimeToPoint: timeToPoint,
     });
   } else if (noteType === "leftHandUp") {
     noteQueue.push({
-      curX: locations["leftHandUp"].x,
+      curX: screenWidth,
       curY: 0,
+      finX: locations["leftHandUp"].x,
       finY: locations["leftHandUp"].y,
       noteType: "leftHandUp",
       TimeToPoint: timeToPoint,
