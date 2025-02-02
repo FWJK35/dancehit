@@ -1,3 +1,5 @@
+import { useBlocker } from "react-router-dom";
+
 let locations = {
   rightFoot: { x: 0, y: 0 },
   rightHandWide: { x: 0, y: 0 },
@@ -8,15 +10,29 @@ let locations = {
 };
 
 let poses;
+let gameStarted = false;
+
+const threshold = 20;
+
+let gameScore = 0;
 
 let songTime = 0;
 let beatMap = [];
 
 let noteQueue = [];
 
-const fps = 60;
+const fps = 50;
 
-let inBox = {
+let currentlyIn = {
+  leftHandWide: false,
+  rightHandWide: false,
+  leftFoot: false,
+  rightFoot: false,
+  leftHandUp: false,
+  rightHandUp: false,
+};
+
+let lastCycleIn = {
   leftHandWide: false,
   rightHandWide: false,
   leftFoot: false,
@@ -29,6 +45,14 @@ const rectLen = 100;
 
 const getLen = () => {
   return rectLen;
+};
+
+const getGameScore = () => {
+  return gameScore;
+};
+
+const getFPS = () => {
+  return fps;
 };
 
 const setPoses = (newPoses) => {
@@ -94,10 +118,27 @@ const startCalibration = (setCountdown) => {
 
 const startGame = () => {
   console.log("Starting game");
+  gameStarted = true;
   songTime = 0;
   setInterval(() => {
     songTime += 1 / fps;
   }, 1000 / fps);
+};
+
+const getGameStarted = () => {
+  return gameStarted;
+};
+
+const getSongTime = () => {
+  return songTime;
+};
+
+const getBeatMap = () => {
+  return beatMap;
+};
+
+const getOffset = () => {
+  return 2;
 };
 
 const getLocations = () => {
@@ -258,43 +299,74 @@ const getPressed = (drawDot) => {
     const lhux = locations["leftHandUp"].x;
     const lhuy = locations["leftHandUp"].y;
 
-    inBox["leftHandWide"] = arePointsInSquare(leftHand, [
+    // last set = current set
+
+    lastCycleIn = currentlyIn;
+
+    // current set update
+
+    currentlyIn["leftHandWide"] = arePointsInSquare(leftHand, [
       lhwx - rectLen / 2,
       lhwy - rectLen / 2,
       rectLen,
       rectLen,
     ]);
-    inBox["rightHandWide"] = arePointsInSquare(rightHand, [
+    currentlyIn["rightHandWide"] = arePointsInSquare(rightHand, [
       rhwx - rectLen / 2,
       rhwy - rectLen / 2,
       rectLen,
       rectLen,
     ]);
-    inBox["leftHandUp"] = arePointsInSquare(leftHand, [
+    currentlyIn["leftHandUp"] = arePointsInSquare(leftHand, [
       lhux - rectLen / 2,
       lhuy - rectLen / 2,
       rectLen,
       rectLen,
     ]);
-    inBox["rightHandUp"] = arePointsInSquare(rightHand, [
+    currentlyIn["rightHandUp"] = arePointsInSquare(rightHand, [
       rhux - rectLen / 2,
       rhuy - rectLen / 2,
       rectLen,
       rectLen,
     ]);
-    inBox["rightFoot"] = arePointsInSquare(rightFoot, [
+    currentlyIn["rightFoot"] = arePointsInSquare(rightFoot, [
       rfx - rectLen / 2,
       rfy - rectLen / 2,
       rectLen,
       rectLen,
     ]);
-
-    inBox["leftFoot"] = arePointsInSquare(leftFoot, [
+    currentlyIn["leftFoot"] = arePointsInSquare(leftFoot, [
       lfx - rectLen / 2,
       lfy - rectLen / 2,
       rectLen,
       rectLen,
     ]);
+
+    // check through queue
+
+    // score adding code
+    Object.keys(noteQueue).forEach((note) => {
+      Object.keys(currentlyIn).forEach((squareIn) => {
+        if (currentlyIn[squareIn] !== lastCycleIn[currentlyIn]) {
+          if (squareIn === note) {
+            if (Math.abs(noteQueue[note].finY - noteQueue[note].curY) < threshold) {
+              gameScore++;
+            }
+          }
+        }
+      });
+    });
+
+    // for .. in noteQueue
+    // for .. in currentSet:
+    // if( .. != past)
+    // if(.. == queue requested)
+    // if(both actions .. and queue requested are within time):
+    // score++
+    // else(not requested):
+    // dont change
+    // else if equal to past:
+    // dont change
 
     // console.log(
     //   arePointsInSquare(leftHand, [lhux - rectLen / 2, lhuy - rectLen / 2, rectLen, rectLen])
@@ -304,11 +376,11 @@ const getPressed = (drawDot) => {
     //   arePointsInSquare(rightHand, [rhux - rectLen / 2, rhuy - rectLen / 2, rectLen, rectLen])
     // );
 
-    Object.entries(inBox).forEach((point) => {
-      if (inBox[point]) {
-        drawDot(locations[point]);
-      }
-    });
+    // Object.entries(inBox).forEach((point) => {
+    //   if (inBox[point]) {
+    //     drawDot(locations[point]);
+    //   }
+    // });
   }
 
   return pressed;
@@ -330,4 +402,10 @@ export {
   addToQueue,
   updateQueue,
   setBeatMap,
+  getSongTime,
+  getBeatMap,
+  getOffset,
+  getGameStarted,
+  getFPS,
+  getGameScore,
 };

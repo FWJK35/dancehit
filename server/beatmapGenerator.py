@@ -98,6 +98,15 @@ if __name__ == "__main__":
     # print("Hashmap for the first music file:")
     # for timestamp, numbers in beat_steps_1.items():
     #     print(f"{timestamp:.2f}s -> {numbers}")
+    with open("Dynamite.json", "w") as f:
+     json.dump(beat_steps_2, f, indent=4)
+    with open("Party in the USA.json", "w") as f:
+     json.dump(beat_steps_3, f, indent=4)
+    print("Hashmaps saved as JSON files.")
+    # Print the hashmap for the first music file.
+    print("Hashmap for the first music file:")
+    for timestamp, numbers in beat_steps_1.items():
+        print(f"{timestamp:.2f}s -> {numbers}")
     
     # print("\nHashmap for the second music file:")
     # for timestamp, numbers in beat_steps_2.items():

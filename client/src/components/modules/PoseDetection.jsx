@@ -10,12 +10,20 @@ import {
   addToQueue,
   getQueue,
   getLen,
+  getSongTime,
+  getGameStarted,
+  getOffset,
+  getBeatMap,
+  getFPS,
+  getGameScore,
 } from "../../game-logic";
 import "./PoseDetection.css";
+const bitMap = [];
 
 const PoseDetection = (props) => {
   const webcamRef = props.webcamRef;
   const canvasRef = props.canvasRef;
+
   if (
     typeof webcamRef.current !== "undefined" &&
     webcamRef.current !== null &&
@@ -94,10 +102,39 @@ const PoseDetection = (props) => {
     });
 
     // replace drawRectangle with drawImage, and get it to drawImages based on the type of item
-    getQueue().forEach((item) => {
-      console.log(item);
-      drawRectangle(ctx, item.curX - getLen() / 2, item.curY - getLen() / 2, getLen(), getLen());
-    });
+    // getQueue().forEach((item) => {
+    //   console.log(item);
+    //   drawRectangle(ctx, item.curX - getLen() / 2, item.curY - getLen() / 2, getLen(), getLen());
+    // });
+
+    if (getGameStarted()) {
+      const songTime = getSongTime(); //* getFPS();
+      const beatMap = getBeatMap();
+      const offset = getOffset();
+
+      Object.keys(beatMap).forEach((timeStamp) => {
+        if (parseFloat(timeStamp) < songTime - offset) {
+          let actions = beatMap[timeStamp];
+          delete beatMap[timeStamp];
+
+          actions.forEach((action) => {
+            if (action === -3) {
+              addToQueue("leftHandUp", window.innerHeight);
+            } else if (action === -2) {
+              addToQueue("leftHandWide", window.innerHeight);
+            } else if (action === -1) {
+              addToQueue("leftFoot", window.innerHeight);
+            } else if (action === 1) {
+              addToQueue("rightFoot", window.innerHeight);
+            } else if (action === 2) {
+              addToQueue("rightHandWide", window.innerHeight);
+            } else if (action === 3) {
+              addToQueue("rightHandUp", window.innerHeight);
+            }
+          });
+        }
+      });
+    }
 
     if (poses.length > 0) {
       // ✅ Flip keypoints for mirrored skeleton
@@ -172,14 +209,11 @@ const PoseDetection = (props) => {
     runPoseDetection();
   }, []);
 
-  const addSlidingElement = () => {
-    addToQueue("rightHandWide", window.innerHeight);
-  };
-
   return (
     <div>
       <Webcam ref={webcamRef} className="webcam" />
       <canvas ref={canvasRef} className="game-display" />
+      <p>{getGameScore()}</p>
     </div>
   );
 };
