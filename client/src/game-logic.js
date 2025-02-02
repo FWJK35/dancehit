@@ -35,7 +35,6 @@ const setPoses = (newPoses) => {
   poses = newPoses;
 };
 
-// goes into game logic
 const arePointsInSquare = (points, square) => {
   const [x, y, width, height] = square;
 
@@ -105,8 +104,50 @@ const getLocations = () => {
   return locations;
 };
 
-const addToQueue = () => {
-  noteQueue.push({ curX: 0, finX: 300, noteType: "left" });
+const addToQueue = (noteType, screenHeight) => {
+  if (noteType === "rightFoot") {
+    noteQueue.push({
+      curX: locations["rightFoot"].x,
+      curY: screenHeight,
+      finY: locations["rightFoot"].y,
+      noteType: "rightFoot",
+    });
+  } else if (noteType === "rightHandWide") {
+    noteQueue.push({
+      curX: locations["rightHandWide"].x,
+      curY: 0,
+      finY: locations["rightHandWide"].y,
+      noteType: "rightHandWide",
+    });
+  } else if (noteType === "rightHandUp") {
+    noteQueue.push({
+      curX: locations["rightHandUp"].x,
+      curY: 0,
+      finY: locations["rightHandUp"].y,
+      noteType: "rightHandUp",
+    });
+  } else if (noteType === "leftFoot") {
+    noteQueue.push({
+      curX: locations["leftFoot"].x,
+      curY: screenHeight,
+      finY: locations["leftFoot"].y,
+      noteType: "leftFoot",
+    });
+  } else if (noteType === "leftHandWide") {
+    noteQueue.push({
+      curX: locations["leftHandWide"].x,
+      curY: 0,
+      finY: locations["leftHandWide"].y,
+      noteType: "leftHandWide",
+    });
+  } else if (noteType === "leftHandUp") {
+    noteQueue.push({
+      curX: locations["leftHandUp"].x,
+      curY: 0,
+      finY: locations["leftHandUp"].y,
+      noteType: "leftHandUp",
+    });
+  }
 };
 
 const getQueue = () => {
@@ -114,12 +155,44 @@ const getQueue = () => {
 };
 
 const updateQueue = () => {
+  // console.log(noteQueue);
   noteQueue.forEach((element, index) => {
-    if (element.curX > element.finX) {
-      noteQueue.splice(index, index + 1);
-    } else {
-      console.log("we in that b");
-      element.curX += 2;
+    if (element.noteType === "rightFoot") {
+      if (element.curY < element.finY) {
+        noteQueue.splice(index, index + 1);
+      } else {
+        element.curY -= 2;
+      }
+    } else if (element.noteType === "rightHandWide") {
+      if (element.curY > element.finY) {
+        noteQueue.splice(index, index + 1);
+      } else {
+        element.curY += 2;
+      }
+    } else if (element.noteType === "rightHandUp") {
+      if (element.curY > element.finY) {
+        noteQueue.splice(index, index + 1);
+      } else {
+        element.curY += 2;
+      }
+    } else if (element.noteType === "leftFoot") {
+      if (element.curY < element.finY) {
+        noteQueue.splice(index, index + 1);
+      } else {
+        element.curY -= 2;
+      }
+    } else if (element.noteType === "leftHandWide") {
+      if (element.curY > element.finY) {
+        noteQueue.splice(index, index + 1);
+      } else {
+        element.curY += 2;
+      }
+    } else if (element.noteType === "leftHandUp") {
+      if (element.curY > element.finY) {
+        noteQueue.splice(index, index + 1);
+      } else {
+        element.curY += 2;
+      }
     }
   });
 };

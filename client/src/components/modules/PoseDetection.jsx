@@ -16,6 +16,13 @@ import "./PoseDetection.css";
 const PoseDetection = (props) => {
   const webcamRef = props.webcamRef;
   const canvasRef = props.canvasRef;
+  if (
+    typeof webcamRef.current !== "undefined" &&
+    webcamRef.current !== null &&
+    webcamRef.current.video.readyState === 4
+  ) {
+    const screenHeight = webcamRef.current.video.videoHeight;
+  }
 
   const detect = async (detector) => {
     if (
@@ -86,8 +93,10 @@ const PoseDetection = (props) => {
       );
     });
 
+    // replace drawRectangle with drawImage, and get it to drawImages based on the type of item
     getQueue().forEach((item) => {
-      drawRectangle(ctx, item.curX - 10, 300 - 10, 20, 20);
+      console.log(item);
+      drawRectangle(ctx, item.curX - getLen() / 2, item.curY - getLen() / 2, getLen(), getLen());
     });
 
     if (poses.length > 0) {
@@ -164,7 +173,7 @@ const PoseDetection = (props) => {
   }, []);
 
   const addSlidingElement = () => {
-    addToQueue();
+    addToQueue("rightHandWide", window.innerHeight);
   };
 
   return (
