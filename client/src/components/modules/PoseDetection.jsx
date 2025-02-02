@@ -1,7 +1,13 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, use } from "react";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs";
 import Webcam from "react-webcam";
+
+import leftArrow from "./leftArrow.png";
+import rightArrow from "./rightArrow.png";
+import upArrow from "./upArrow.png";
+import downArrow from "./downArrow.png";
+
 import {
   setPoses,
   getLocations,
@@ -19,6 +25,56 @@ import {
 } from "../../game-logic";
 import "./PoseDetection.css";
 const bitMap = [];
+let arrows = {
+  leftHandUp: {
+    id: "leftHandUp",
+    src: downArrow,
+    size: 192,
+  },
+  leftHandWide: {
+    id: "leftHandWide",
+    src: leftArrow,
+    size: 192,
+  },
+  leftFoot: {
+    id: "leftFoot",
+    src: upArrow,
+    size: 192,
+  },
+  rightFoot: {
+    id: "rightFoot",
+    src: upArrow,
+    size: 192,
+  },
+  rightHandWide: {
+    id: "rightHandWide",
+    src: rightArrow,
+    size: 192,
+  },
+  rightHandUp: {
+    id: "rightHandUp",
+    src: upArrow,
+    size: 192,
+  },
+};
+
+const loadAsset = (asset) => {
+  return new Promise((resolve, reject) => {
+    const assetImage = new Image(asset.size, asset.size);
+    assetImage.src = asset.src;
+    assetImage.onload = () => resolve({ id: asset.id, imgObj: assetImage });
+    assetImage.onerror = (e) => {
+      reject(new Error(`Image does not exist. URL: ${asset.src}`));
+    };
+  });
+};
+
+const loadAssets = async () => {
+  const loadedPlayers = await Promise.all(Object.values(arrows).map(loadAsset));
+  loadedPlayers.forEach((asset) => {
+    arrows[asset.id].imgObj = asset.imgObj;
+  });
+};
 
 const PoseDetection = (props) => {
   const webcamRef = props.webcamRef;
@@ -105,8 +161,9 @@ const PoseDetection = (props) => {
     getQueue().forEach((item) => {
       // console.log(Math.abs(item.curY - item.finY));
       // console.log(item.TimeToPoint);
-      drawRectangle(
-        ctx,
+      console.log(item);
+      ctx.drawImage(
+        arrows[item.noteType].imgObj,
         item.curX - getLen() / 2,
         item.curY +
           (Math.abs(item.curY - item.finY) * (getOffset() - item.TimeToPoint)) / getOffset() -
@@ -114,9 +171,18 @@ const PoseDetection = (props) => {
         getLen(),
         getLen()
       );
+      // drawRectangle(
+      //   ctx,
+      //   item.curX - getLen() / 2,
+      //   item.curY +
+      //     (Math.abs(item.curY - item.finY) * (getOffset() - item.TimeToPoint)) / getOffset() -
+      //     getLen() / 2,
+      //   getLen(),
+      //   getLen()
+      // );
     });
 
-    console.log(getGameScore());
+    // console.log(getGameScore());
 
     if (getGameStarted()) {
       const songTime = getSongTime(); //* getFPS();
@@ -210,11 +276,11 @@ const PoseDetection = (props) => {
   // Component logic will go here
   useEffect(() => {
     const runPoseDetection = async () => {
+      await loadAssets(); // Wait for assets to load
       await tf.ready();
       const detector = await poseDetection.createDetector(poseDetection.SupportedModels.BlazePose, {
         runtime: "tfjs",
       });
-
       setInterval(() => {
         detect(detector);
       }, 50);
