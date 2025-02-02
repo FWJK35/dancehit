@@ -54,9 +54,9 @@ def detect_peaks_by_window(audio_file: str,
 
 if __name__ == '__main__':
     # Replace with the path to your audio file.
-    audio_file = "Songs/Coldplay - A Sky Full Of Stars (Official audio).mp3"
+    # audio_file = "Songs/Coldplay - A Sky Full Of Stars (Official audio).mp3"
     # audio_file = "Songs/Coldplay - /Users/aalibaali/Desktop/Mock Website/Songs/Coldplay - A Sky Full Of Stars (Official audio).mp3"
-    # audio_file = "Songs/Coldplay - Songs/Travis Scott - FE!N ft. Playboi Carti.mp3"
+    audio_file = "Songs/Travis Scott - FE!N ft. Playboi Carti.mp3"
 
 
     
