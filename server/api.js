@@ -67,6 +67,7 @@ router.post("/process-audio", upload.single("audio"), (req, res) => {
     inputFile,
     outputFile,
   ]);
+
   pythonProcess.stderr.on("data", (data) => {
     console.error(`Python script error: ${data}`);
   });
@@ -74,6 +75,14 @@ router.post("/process-audio", upload.single("audio"), (req, res) => {
   //console.log(pythonProcess);
   pythonProcess.stdout.on("data", (data) => {
     console.log(data.toString());
+  });
+
+  pythonProcess.on("exit", (code, signal) => {
+    if (code === null) {
+      console.log(`Child process terminated due to signal: ${signal}`);
+    } else {
+      console.log(`Child process exited with code: ${code}`);
+    }
   });
 
   pythonProcess.on("close", (code) => {
@@ -128,7 +137,6 @@ router.post("/process-audio", upload.single("audio"), (req, res) => {
       console.log("test5");
     });
   });
-  console.log("done");
 });
 
 router.get("/songs", (req, res) => {
