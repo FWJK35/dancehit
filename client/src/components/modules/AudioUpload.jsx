@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 // import "./AudioUpload.css";
 // import axios from "axios";
 import { post } from "../../utilities";
-import setBeatMap from "../../game-logic";
+import { setBeatMap } from "../../game-logic";
 
 const AudioUpload = (props) => {
   const [file, setFile] = useState(null);
-  const [output, setOutput] = useState({});
+  const [output, setOutput] = useState("");
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -38,7 +38,7 @@ const AudioUpload = (props) => {
           throw new Error("Error processing audio file");
         })
         .then((data) => {
-          setOutput(JSON.parse(data.data));
+          setOutput(data.data);
           setBeatMap(JSON.parse(data.data));
         });
     } catch (error) {

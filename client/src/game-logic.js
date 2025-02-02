@@ -329,4 +329,5 @@ export {
   getQueue,
   addToQueue,
   updateQueue,
+  setBeatMap,
 };
