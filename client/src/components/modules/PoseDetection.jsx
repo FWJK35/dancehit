@@ -1,8 +1,8 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs";
 import Webcam from "react-webcam";
-import { setPoses, getLocations } from "../../game-logic";
+import { setPoses, getLocations, getPressed, getLen } from "../../game-logic";
 import "./PoseDetection.css";
 
 const PoseDetection = (props) => {
@@ -24,14 +24,6 @@ const PoseDetection = (props) => {
 
       const poses = await detector.estimatePoses(video);
 
-      if (poses.length > 0) {
-        const rightWrist = poses[0].keypoints.find((kp) => kp.name === "right_wrist");
-        if (rightWrist.score > 0.5) {
-          // Use rightWrist.x and rightWrist.y to control game elements
-          //updateGameState(rightWrist.x, rightWrist.y);
-        }
-      }
-
       setPoses(poses);
       drawCanvas(poses, video, videoWidth, videoHeight, canvasRef);
     }
@@ -39,34 +31,99 @@ const PoseDetection = (props) => {
 
   const drawCanvas = (poses, video, videoWidth, videoHeight, canvas) => {
     const ctx = canvas.current.getContext("2d");
+
+    // ✅ Save original state before transformations
+    ctx.save();
+
+    // ✅ Clear previous frame
+    ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
+
+    // ✅ Set canvas size
     canvas.current.width = videoWidth;
     canvas.current.height = videoHeight;
-    //gameLogic.setPoses(poses);
+
+    // Flip the canvas horizontally (mirror effect)
+    ctx.save(); // Save the original state
+    ctx.scale(-1, 1);
+    ctx.translate(-videoWidth, 0); // Move flipped content back into view
+
+    // Draw the video (mirrored)
+    ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+    // Restore the canvas to normal for accurate keypoint drawing
+    ctx.restore();
+
+    // ✅ Flip canvas horizontally
+    ctx.scale(-1, 1);
+    ctx.translate(-videoWidth, 0);
+
+    // ✅ Draw mirrored video
+    ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+    // ✅ Restore canvas so drawings aren't flipped
+    ctx.restore();
+
+    // ✅ Draw static elements (rectangles)
     Object.values(getLocations()).forEach((location) => {
-      const circleSize = 20;
-      const { x, y } = location;
-      ctx.beginPath();
-      ctx.arc(x, y, circleSize, 0, 2 * Math.PI);
-      ctx.fillStyle = "red";
-      ctx.fill();
+      const squareLen = getLen();
+      drawRectangle(
+        ctx,
+        location.x - squareLen / 2,
+        location.y - squareLen / 2,
+        squareLen,
+        squareLen
+      );
     });
-    drawKeypoints(poses[0].keypoints, ctx);
-    drawSkeleton(poses[0].keypoints, ctx);
+
+    getPressed((x, y) => {
+      drawDot(ctx, x, y);
+    });
+
+    if (poses.length > 0) {
+      // ✅ Flip keypoints for mirrored skeleton
+      const flippedKeypoints = poses[0].keypoints.map((kp) => ({
+        ...kp,
+        x: videoWidth - kp.x, // Flip X coordinate
+      }));
+
+      drawKeypoints(flippedKeypoints, ctx, videoWidth);
+      drawSkeleton(flippedKeypoints, ctx, videoWidth);
+    }
   };
 
-  const drawKeypoints = (keypoints, ctx) => {
+  const drawKeypoints = (keypoints, ctx, videoWidth) => {
     keypoints.forEach((keypoint) => {
       if (keypoint.score > 0.2) {
         const { x, y } = keypoint;
         ctx.beginPath();
-        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.arc(videoWidth - x, y, 5, 0, 2 * Math.PI);
         ctx.fillStyle = "red";
         ctx.fill();
       }
     });
   };
 
-  const drawSkeleton = (keypoints, ctx) => {
+  const drawRectangle = (ctx, x, y, width, height) => {
+    if (!ctx) {
+      console.error("Canvas context is null!");
+      return;
+    }
+
+    ctx.beginPath();
+    ctx.rect(Math.floor(x), Math.floor(y), width, height);
+    ctx.strokeStyle = "red"; // Optional: Add a border
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  };
+
+  const drawDot = (ctx, x, y, color = "blue") => {
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+  };
+
+  const drawSkeleton = (keypoints, ctx, videoWidth) => {
     const connections = poseDetection.util.getAdjacentPairs(
       poseDetection.SupportedModels.BlazePose
     );
@@ -77,8 +134,8 @@ const PoseDetection = (props) => {
 
       if (kp1.score > 0.2 && kp2.score > 0.2) {
         ctx.beginPath();
-        ctx.moveTo(kp1.x, kp1.y);
-        ctx.lineTo(kp2.x, kp2.y);
+        ctx.moveTo(videoWidth - kp1.x, kp1.y); // Flip X coordinate
+        ctx.lineTo(videoWidth - kp2.x, kp2.y); // Flip X coordinate
         ctx.strokeStyle = "blue";
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -96,7 +153,7 @@ const PoseDetection = (props) => {
 
       setInterval(() => {
         detect(detector);
-      }, 100);
+      }, 50);
     };
 
     runPoseDetection();
