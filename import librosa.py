@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
 import random
+import json
 
 def generate_ddr_steps(audio_file: str) -> dict:
     """
@@ -24,7 +25,7 @@ def generate_ddr_steps(audio_file: str) -> dict:
     # Detect beats in the audio file.
     tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
     
-    # Convert beat frames to actual time values (in seconds).
+    # Convert beat frames to time values (in seconds).
     beat_times = librosa.frames_to_time(beat_frames, sr=sr)
     
     # Define the pool of possible numbers.
@@ -35,12 +36,12 @@ def generate_ddr_steps(audio_file: str) -> dict:
     length_choices = [1, 2, 3]
     length_weights = [0.3, 0.5, 0.2]
     
-    # Helper function to check if a list violates the constraint.
+    # Helper function to check for conflict constraints.
     def violates_constraint(num_list):
-        # Cannot have both 2 and 3.
+        # Cannot have both positive 2 and 3.
         if 2 in num_list and 3 in num_list:
             return True
-        # Cannot have both -2 and -3.
+        # Cannot have both negative 2 and -3.
         if -2 in num_list and -3 in num_list:
             return True
         return False
@@ -48,9 +49,10 @@ def generate_ddr_steps(audio_file: str) -> dict:
     # Generate the hashmap with beat timestamps as keys and the corresponding list of numbers as values.
     steps_dict = {}
     for beat in beat_times:
-        # Choose how many numbers to generate for this beat.
+        # Determine how many numbers to generate based on the probability distribution.
         list_length = random.choices(length_choices, weights=length_weights, k=1)[0]
-        # Use random.sample to ensure no repeats; re-sample if the list violates the constraint.
+        # Use random.sample (sampling without replacement) to ensure no repeats,
+        # and re-sample if the generated list violates the constraint.
         while True:
             step_numbers = random.sample(possible_numbers, list_length)
             if not violates_constraint(step_numbers):
@@ -60,13 +62,33 @@ def generate_ddr_steps(audio_file: str) -> dict:
     return steps_dict
 
 if __name__ == "__main__":
-    # Specify the path to the audio file to analyze.
-    audio_path = "Songs/Travis Scott - FE!N ft. Playboi Carti.mp3"  # Replace with your audio file path
+    # Specify the paths to your two audio files.
+    audio_path_1 = "Songs/Travis Scott - FE!N ft. Playboi Carti.mp3"  # Replace with your first audio file path
+    audio_path_2 = "Songs/BTS - Dynamite .mp3"  
+    audio_path_3 = "Songs/Miley Cyrus - Party In The U.S.A .mp3" 
+
+    # Generate the DDR steps hashmap for the first music file.
+    beat_steps_1 = generate_ddr_steps(audio_path_1)
     
-    # Generate the beat-to-number mapping.
-    beat_steps = generate_ddr_steps(audio_path)
+    # Generate the DDR steps hashmap for the second music file.
+    beat_steps_2 = generate_ddr_steps(audio_path_2)
+    beat_steps_3 = generate_ddr_steps(audio_path_3)
+
+
+    with open("FEIN.json", "w") as f:
+        json.dump(beat_steps_1, f, indent=4)
+
+# Save the second hashmap to a JSON file.
+    with open("Dynamite.json", "w") as f:
+     json.dump(beat_steps_2, f, indent=4)
+    with open("Party in the USA.json", "w") as f:
+     json.dump(beat_steps_2, f, indent=4)
+    print("Hashmaps saved as JSON files.")
+    # Print the hashmap for the first music file.
+    print("Hashmap for the first music file:")
+    for timestamp, numbers in beat_steps_1.items():
+        print(f"{timestamp:.2f}s -> {numbers}")
     
-    # Print the resulting hashmap.
-    print("Beat timestamps and corresponding number lists:")
-    for timestamp, numbers in beat_steps.items():
+    print("\nHashmap for the second music file:")
+    for timestamp, numbers in beat_steps_2.items():
         print(f"{timestamp:.2f}s -> {numbers}")
