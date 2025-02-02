@@ -310,7 +310,7 @@ const getPressed = (drawDot) => {
 
     // last set = current set
 
-    lastCycleIn = currentlyIn;
+    lastCycleIn = Object.assign({}, currentlyIn);
 
     // current set update
 
@@ -354,24 +354,25 @@ const getPressed = (drawDot) => {
     // check through queue
 
     // score adding code
-    console.log(gameScore);
+    // console.log(gameScore);
 
     // Iterate through all notes currently in the queue
     noteQueue.forEach((note) => {
       // Iterate through all movement zones (left hand, right foot, etc.)
       Object.keys(currentlyIn).forEach((squareIn) => {
         // Check if the player has just entered or exited a movement zone
-        if (currentlyIn[squareIn] !== lastCycleIn[squareIn]) {
+        if (currentlyIn[squareIn] !== lastCycleIn[squareIn] && currentlyIn[squareIn] === true) {
           // Check if the movement zone corresponds to the note's required action
           if (squareIn === note.noteType) {
             // <-- FIX: Use note.noteType instead of note
-
+            // console.log(note.TimeToPoint);
             // Check if the note is close enough to the target position for a successful hit
             if (Math.abs(note.TimeToPoint) < threshold) {
               // <-- FIX: Directly access note properties
 
               // Increment the score for a correct move
               gameScore++;
+              console.log("GAME SCORE UPDATED YUR BRODIE " + String(gameScore));
             }
           }
         }

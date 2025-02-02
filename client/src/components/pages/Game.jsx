@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import PoseDetection from "../modules/PoseDetection";
 import SongsList from "../modules/SongsList";
 import AudioUpload from "../modules/AudioUpload";
+import ScoreKeeper from "../modules/scoreKeeper";
 import { startCalibration, startGame } from "../../game-logic";
 import { get } from "../../utilities";
 
@@ -35,6 +36,7 @@ const Game = () => {
       <PoseDetection canvasRef={canvasRef} webcamRef={webcamRef} />
       <button onClick={handleStartCalibration}>Start Calibration</button>
       <button onClick={handleGameStart}>Start Game</button>
+      <ScoreKeeper />
       <button
         onClick={() => {
           get("/api/songs").then((songs) => {

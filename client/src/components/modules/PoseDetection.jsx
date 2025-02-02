@@ -116,6 +116,8 @@ const PoseDetection = (props) => {
       );
     });
 
+    console.log(getGameScore());
+
     if (getGameStarted()) {
       const songTime = getSongTime(); //* getFPS();
       const beatMap = getBeatMap();
@@ -225,7 +227,6 @@ const PoseDetection = (props) => {
     <div>
       <Webcam ref={webcamRef} className="webcam" />
       <canvas ref={canvasRef} className="game-display" />
-      <p>{getGameScore()}</p>
     </div>
   );
 };
