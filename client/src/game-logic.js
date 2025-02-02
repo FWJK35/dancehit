@@ -1,16 +1,72 @@
-let locations = {};
+let locations = {
+  rightFoot: { x: 0, y: 0 },
+  rightHandWide: { x: 0, y: 0 },
+  rightHandUp: { x: 0, y: 0 },
+  leftFoot: { x: 0, y: 0 },
+  leftHandWide: { x: 0, y: 0 },
+  leftHandUp: { x: 0, y: 0 },
+};
 
 let poses;
+
+let inBox = {
+  leftHandWide: false,
+  rightHandWide: false,
+  leftFoot: false,
+  rightFoot: false,
+  leftHandUp: false,
+  rightHandUp: false,
+};
+
+const rectLen = 100;
+
+const getLen = () => {
+  return rectLen;
+};
 
 const setPoses = (newPoses) => {
   poses = newPoses;
 };
 
+// goes into game logic
+const arePointsInSquare = (points, square) => {
+  const [x, y, width, height] = square;
+
+  return points.some(
+    (point) => point[0] >= x && point[0] <= x + width && point[1] >= y && point[1] <= y + height
+  );
+};
+
 const calibrate = (keypoints) => {
-  locations["rightFoot"] = keypoints.find((kp) => kp.name === "right_ankle");
-  locations["leftFoot"] = keypoints.find((kp) => kp.name === "left_ankle");
-  locations["rightHand"] = keypoints.find((kp) => kp.name === "right_wrist");
-  locations["leftHand"] = keypoints.find((kp) => kp.name === "left_wrist");
+  if (keypoints.find((kp) => kp.name === "right_ankle")) {
+    locations["rightFoot"] = keypoints.find((kp) => kp.name === "right_ankle");
+  }
+
+  if (keypoints.find((kp) => kp.name === "left_ankle")) {
+    locations["leftFoot"] = keypoints.find((kp) => kp.name === "left_ankle");
+  }
+
+  if (keypoints.find((kp) => kp.name === "right_wrist")) {
+    locations["rightHandWide"] = keypoints.find((kp) => kp.name === "right_wrist");
+
+    const dist = Math.abs(
+      locations["rightHandWide"].x - keypoints.find((kp) => kp.name === "right_shoulder").x
+    );
+
+    locations["rightHandUp"].x = keypoints.find((kp) => kp.name === "right_shoulder").x;
+    locations["rightHandUp"].y = keypoints.find((kp) => kp.name === "right_shoulder").y - dist;
+  }
+
+  if (keypoints.find((kp) => kp.name === "left_wrist")) {
+    locations["leftHandWide"] = keypoints.find((kp) => kp.name === "left_wrist");
+
+    const dist = Math.abs(
+      locations["leftHandWide"].x - keypoints.find((kp) => kp.name === "left_shoulder").x
+    );
+
+    locations["leftHandUp"].x = keypoints.find((kp) => kp.name === "left_shoulder").x;
+    locations["leftHandUp"].y = keypoints.find((kp) => kp.name === "left_shoulder").y - dist;
+  }
 };
 
 const startCalibration = (setCountdown) => {
@@ -34,23 +90,140 @@ const getLocations = () => {
   return locations;
 };
 
-const getPressed = (keypoints) => {
+const getPressed = (drawDot) => {
   const pressed = {};
-  Object.values(locations).forEach((location) => {
-    //If keypoint is found and strong enough
-    const thisKp = keypoints.find((kp) => kp.name === location.name);
-    if (thisKp.score > 0.5) {
-      const distance = Math.sqrt(
-        Math.pow(location.x - thisKp.x, 2) + Math.pow(location.y - thisKp.y, 2)
-      );
-      if (distance < 50) {
-        return (pressed[location.name] = true);
-      } else {
-        return (pressed[location.name] = false);
+  const keypoints = poses[0].keypoints;
+  // Object.values(locations).forEach((location) => {
+  //   //If keypoint is found and strong enough
+  //   const thisKp = keypoints.find((kp) => kp.name === location.name);
+  //   if (thisKp.score > 0.5) {
+  //     const distance = Math.sqrt(
+  //       Math.pow(location.x - thisKp.x, 2) + Math.pow(location.y - thisKp.y, 2)
+  //     );
+  //     if (distance < 50) {
+  //       drawDot(this);
+  //       return (pressed[location.name] = true);
+  //     } else {
+  //       return (pressed[location.name] = false);
+  //     }
+  //   }
+  // });
+
+  if (poses.length > 0) {
+    const rightWrist = poses[0].keypoints.find((kp) => kp.name === "right_wrist");
+    const rightIndex = poses[0].keypoints.find((kp) => kp.name === "right_index");
+    const rightPinky = poses[0].keypoints.find((kp) => kp.name === "right_pinky");
+    const rightThumb = poses[0].keypoints.find((kp) => kp.name === "right_thumb");
+
+    const leftWrist = poses[0].keypoints.find((kp) => kp.name === "left_wrist");
+    const leftIndex = poses[0].keypoints.find((kp) => kp.name === "left_index");
+    const leftPinky = poses[0].keypoints.find((kp) => kp.name === "left_pinky");
+    const leftThumb = poses[0].keypoints.find((kp) => kp.name === "left_thumb");
+
+    const leftAnkle = poses[0].keypoints.find((kp) => kp.name === "left_ankle");
+    const leftHeel = poses[0].keypoints.find((kp) => kp.name === "left_heel");
+    const leftFeet = poses[0].keypoints.find((kp) => kp.name === "left_foot_index");
+
+    const rightAnkle = poses[0].keypoints.find((kp) => kp.name === "right_ankle");
+    const rightHeel = poses[0].keypoints.find((kp) => kp.name === "right_heel");
+    const rightFeet = poses[0].keypoints.find((kp) => kp.name === "right_foot_index");
+
+    const leftHand = [
+      [leftWrist.x, leftWrist.y],
+      [leftIndex.x, leftIndex.y],
+      [leftPinky.x, leftPinky.y],
+      [leftThumb.x, leftThumb.y],
+    ];
+    const rightHand = [
+      [rightWrist.x, rightWrist.y],
+      [rightIndex.x, rightIndex.y],
+      [rightPinky.x, rightPinky.y],
+      [rightThumb.x, rightThumb.y],
+    ];
+    const leftFoot = [
+      [leftAnkle.x, leftAnkle.y],
+      [leftHeel.x, leftHeel.y],
+      [leftFeet.x, leftFeet.y],
+    ];
+    const rightFoot = [
+      [rightAnkle.x, rightAnkle.y],
+      [rightHeel.x, rightHeel.y],
+      [rightFeet.x, rightFeet.y],
+    ];
+
+    const rfx = locations["rightFoot"].x;
+    const rfy = locations["rightFoot"].y;
+    const lfx = locations["leftFoot"].x;
+    const lfy = locations["rightFoot"].y;
+
+    const rhwx = locations["rightHandWide"].x;
+    const rhwy = locations["rightHandWide"].y;
+    const lhwx = locations["leftHandWide"].x;
+    const lhwy = locations["leftHandWide"].y;
+
+    const rhux = locations["rightHandUp"].x;
+    const rhuy = locations["rightHandUp"].y;
+    const lhux = locations["leftHandUp"].x;
+    const lhuy = locations["leftHandUp"].y;
+
+    // console.log(leftHand);
+    // console.log(lhx);
+    // console.log(lhy);
+
+    inBox["leftHandWide"] = arePointsInSquare(leftHand, [
+      lhwx - rectLen / 2,
+      lhwy - rectLen / 2,
+      rectLen,
+      rectLen,
+    ]);
+    inBox["rightHandWide"] = arePointsInSquare(rightHand, [
+      rhwx - rectLen / 2,
+      rhwy - rectLen / 2,
+      rectLen,
+      rectLen,
+    ]);
+    inBox["leftHandUp"] = arePointsInSquare(leftHand, [
+      lhux - rectLen / 2,
+      lhuy - rectLen / 2,
+      rectLen,
+      rectLen,
+    ]);
+    inBox["rightHandUp"] = arePointsInSquare(rightHand, [
+      rhux - rectLen / 2,
+      rhuy - rectLen / 2,
+      rectLen,
+      rectLen,
+    ]);
+    inBox["rightFoot"] = arePointsInSquare(rightFoot, [
+      rfx - rectLen / 2,
+      rfy - rectLen / 2,
+      rectLen,
+      rectLen,
+    ]);
+
+    inBox["leftFoot"] = arePointsInSquare(leftFoot, [
+      lfx - rectLen / 2,
+      lfy - rectLen / 2,
+      rectLen,
+      rectLen,
+    ]);
+
+    console.log(
+      arePointsInSquare(leftHand, [lhux - rectLen / 2, lhuy - rectLen / 2, rectLen, rectLen])
+    );
+
+    console.log(
+      arePointsInSquare(rightHand, [rhux - rectLen / 2, rhuy - rectLen / 2, rectLen, rectLen])
+    );
+
+    Object.entries(inBox).forEach((point) => {
+      if (inBox[point]) {
+        drawDot(locations[point]);
       }
-    }
-  });
+    });
+  }
+
   return pressed;
 };
 
-export { locations, setPoses, calibrate, startCalibration, getLocations, getPressed };
+export { setPoses, calibrate, startCalibration, getLocations, getPressed, getLen };
