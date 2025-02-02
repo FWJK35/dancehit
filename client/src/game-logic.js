@@ -178,10 +178,6 @@ const getPressed = (drawDot) => {
     const lhux = locations["leftHandUp"].x;
     const lhuy = locations["leftHandUp"].y;
 
-    // console.log(leftHand);
-    // console.log(lhx);
-    // console.log(lhy);
-
     inBox["leftHandWide"] = arePointsInSquare(leftHand, [
       lhwx - rectLen / 2,
       lhwy - rectLen / 2,
@@ -219,14 +215,6 @@ const getPressed = (drawDot) => {
       rectLen,
       rectLen,
     ]);
-
-    console.log(
-      arePointsInSquare(leftHand, [lhux - rectLen / 2, lhuy - rectLen / 2, rectLen, rectLen])
-    );
-
-    console.log(
-      arePointsInSquare(rightHand, [rhux - rectLen / 2, rhuy - rectLen / 2, rectLen, rectLen])
-    );
 
     Object.entries(inBox).forEach((point) => {
       if (inBox[point]) {
