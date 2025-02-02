@@ -171,3 +171,7 @@ h1 {
   mix-blend-mode: lighten;
   pointer-events: none;
 }
+
+li {
+  font-size: 240px; /* Adjust the size as needed */
+}
