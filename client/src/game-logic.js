@@ -10,6 +10,7 @@ let locations = {
 let poses;
 
 let songTime = 0;
+let beatMap = [];
 
 let noteQueue = [];
 
@@ -238,6 +239,10 @@ const getPressed = (drawDot) => {
   }
 
   return pressed;
+};
+
+const setBeatMap = (newBeatMap) => {
+  beatMap = newBeatMap;
 };
 
 export {

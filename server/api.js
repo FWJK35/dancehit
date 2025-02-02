@@ -11,6 +11,7 @@ const express = require("express");
 
 // import models so we can interact with the database
 const User = require("./models/user");
+const db = require("mongoose");
 
 // import authentication library
 const auth = require("./auth");
@@ -61,7 +62,7 @@ router.post("/process-audio", upload.single("audio"), (req, res) => {
   console.log(inputFile, outputFile);
 
   const pythonProcess = spawn("python", [
-    path.join(__dirname, "process_audio.py"),
+    path.join(__dirname, "beatmapGenerator.py"),
     inputFile,
     outputFile,
   ]);
@@ -86,10 +87,31 @@ router.post("/process-audio", upload.single("audio"), (req, res) => {
         return res.status(500).send("Error reading output file");
       }
       res.send({ data: data });
+      console.log(data);
+
+      //Save the song to the database
+
+      const songDocument = {
+        name: req.file.originalname,
+        beats: JSON.parse(data),
+        data: fs.readFileSync(inputFile),
+      };
+
+      // db.Collection("songs")
+      //   .insertOne(songDocument, (err, result) => {
+      //     if (err) {
+      //       console.error("Error saving song to database:", err);
+      //     } else {
+      //       console.log("Song saved to database");
+      //     }
+      //   })
+      //   .then((result) => {
+      //     console.log("test4");
+      //   });
 
       // Clean up temporary files
-      // fs.unlink(inputFile, () => {});
-      // fs.unlink(outputFile, () => {});
+      fs.unlink(inputFile, () => {});
+      fs.unlink(outputFile, () => {});
       console.log("test5");
     });
   });

@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 // import "./AudioUpload.css";
 // import axios from "axios";
 import { post } from "../../utilities";
+import setBeatMap from "../../game-logic";
 
 const AudioUpload = (props) => {
   const [file, setFile] = useState(null);
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = useState({});
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -15,6 +16,10 @@ const AudioUpload = (props) => {
     e.preventDefault();
     if (!file) {
       alert("Please select an audio file");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File must be under 10 MB");
       return;
     }
 
@@ -33,7 +38,8 @@ const AudioUpload = (props) => {
           throw new Error("Error processing audio file");
         })
         .then((data) => {
-          setOutput(data.data);
+          setOutput(JSON.parse(data.data));
+          setBeatMap(JSON.parse(data.data));
         });
     } catch (error) {
       console.error("Error processing audio:", error);

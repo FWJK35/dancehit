@@ -5,6 +5,7 @@ import { startCalibration, startGame } from "../../game-logic";
 
 const Game = () => {
   const [countdown, setCountdown] = useState(-1);
+  const [beatMap, setBeatMap] = useState({});
 
   const handleStartCalibration = () => {
     console.log("Starting calibration");
