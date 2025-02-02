@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import PoseDetection from "../modules/PoseDetection";
 import SongsList from "../modules/SongsList";
 import AudioUpload from "../modules/AudioUpload";
-import ScoreKeeper from "../modules/scoreKeeper";
+import ScoreKeeper from "../modules/ScoreKeeper";
 import { startCalibration, startGame } from "../../game-logic";
 import { get } from "../../utilities";
 
