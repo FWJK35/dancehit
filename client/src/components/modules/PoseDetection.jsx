@@ -8,6 +8,15 @@ const PoseDetection = (props) => {
   const webcamRef = props.webcamRef;
   const canvasRef = props.canvasRef;
 
+  const [leftHandIn, setLeftHandIn] = useState(false);
+  const [rightHandIn, setRightHandIn] = useState(false);
+  const [leftFootIn, setLeftFootIn] = useState(false);
+  const [rightFootIn, setRightFootIn] = useState(false);
+  const leftHandSquare = [50, 50, 50, 50];
+  const rightHandSquare = [350, 350, 50, 50];
+  const leftFootSquare = [50, 350, 50, 50];
+  const rightFootSquare = [350, 350, 50, 50];
+
   const detect = async (detector) => {
     if (
       typeof webcamRef.current !== "undefined" &&
@@ -40,6 +49,23 @@ const PoseDetection = (props) => {
     // ✅ Set canvas size
     canvas.current.width = videoWidth;
     canvas.current.height = videoHeight;
+
+    // Flip the canvas horizontally (mirror effect)
+    ctx.save(); // Save the original state
+    ctx.scale(-1, 1);
+    ctx.translate(-videoWidth, 0); // Move flipped content back into view
+
+    // Draw the video (mirrored)
+    ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+    // Restore the canvas to normal for accurate keypoint drawing
+    ctx.restore();
+
+    // Draw rectangles in mirrored positions (manually adjusting x-coordinates)
+    drawRectangle(ctx, 50, 50, 50, 50);
+    drawRectangle(ctx, 350, 50, 50, 50);
+    drawRectangle(ctx, 50, 350, 50, 50);
+    drawRectangle(ctx, 350, 350, 50, 50);
 
     // ✅ Flip canvas horizontally
     ctx.scale(-1, 1);
