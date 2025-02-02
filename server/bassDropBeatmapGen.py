@@ -153,7 +153,7 @@ if __name__ == "__main__":
     )
     
     # Optionally, write the DDR moves dictionary to a JSON file.
-    output_file = "DDR_moves.json"
+    output_file = "DDR_moves.txt"
     with open(output_file, "w") as f:
         json.dump(ddr_moves, f, indent=4)
     
@@ -165,17 +165,17 @@ if __name__ == "__main__":
             break
         print(f"{beat_time:.2f}s -> {moves}")
     
-    # 3. Plot the RMS energy with detected peaks.
-    plt.figure(figsize=(10, 4))
-    plt.plot(times, rms, label="RMS Energy")
-    plt.axhline(y=overall_avg, color="green", linestyle="--", label=f"Overall Avg ({overall_avg:.2f})")
-    plt.axhline(y=threshold, color="red", linestyle="--", label=f"Threshold ({threshold:.2f})")
-    # Mark the detected peak window start times.
-    plt.scatter(peak_times, [rms[i] for i in peak_indices],
-                color="magenta", zorder=5, label="Detected Peak Windows")
-    plt.xlabel("Time (s)")
-    plt.ylabel("RMS Energy")
-    plt.title("Detected Peak Windows (5-Second RMS > 1.5× Overall Average)")
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
+    # # 3. Plot the RMS energy with detected peaks.
+    # plt.figure(figsize=(10, 4))
+    # plt.plot(times, rms, label="RMS Energy")
+    # plt.axhline(y=overall_avg, color="green", linestyle="--", label=f"Overall Avg ({overall_avg:.2f})")
+    # plt.axhline(y=threshold, color="red", linestyle="--", label=f"Threshold ({threshold:.2f})")
+    # # Mark the detected peak window start times.
+    # plt.scatter(peak_times, [rms[i] for i in peak_indices],
+    #             color="magenta", zorder=5, label="Detected Peak Windows")
+    # plt.xlabel("Time (s)")
+    # plt.ylabel("RMS Energy")
+    # plt.title("Detected Peak Windows (5-Second RMS > 1.5× Overall Average)")
+    # plt.legend()
+    # plt.tight_layout()
+    # plt.show()
