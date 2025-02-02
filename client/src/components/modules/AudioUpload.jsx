@@ -22,11 +22,19 @@ const AudioUpload = (props) => {
     formData.append("audio", file);
 
     try {
-      const response = await fetch("/api/process-audio", {
+      const thing = fetch("/api/process-audio", {
         method: "POST",
         body: formData,
-      });
-      setOutput(response.data);
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Error processing audio file");
+        })
+        .then((data) => {
+          setOutput(data.data);
+        });
     } catch (error) {
       console.error("Error processing audio:", error);
       setOutput("An error occurred while processing the audio file.");

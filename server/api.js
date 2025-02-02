@@ -17,6 +17,12 @@ const auth = require("./auth");
 
 // api endpoints: all these paths will be prefixed with "/api/"
 const router = express.Router();
+const app = express();
+
+const multer = require("multer");
+const { spawn } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 
 //initialize socket
 const socketManager = require("./server-socket");
@@ -42,6 +48,57 @@ router.post("/initsocket", (req, res) => {
 // |------------------------------|
 // | write your API methods below!|
 // |------------------------------|
+
+const upload = multer({ dest: "uploads/" });
+
+router.post("/process-audio", upload.single("audio"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No audio file uploaded");
+  }
+
+  const inputFile = req.file.path;
+  const outputFile = path.join("outputs", `${req.file.filename}.txt`);
+  console.log(inputFile, outputFile);
+
+  const pythonProcess = spawn("python", [
+    path.join(__dirname, "process_audio.py"),
+    inputFile,
+    outputFile,
+  ]);
+  pythonProcess.stderr.on("data", (data) => {
+    console.error(`Python script error: ${data}`);
+  });
+
+  //console.log(pythonProcess);
+  pythonProcess.stdout.on("data", (data) => {
+    console.log(data.toString());
+  });
+
+  pythonProcess.on("close", (code) => {
+    console.log(`child process exited with code ${code}`);
+    if (code !== 0) {
+      return res.status(500).send("Error processing audio file");
+    }
+
+    fs.readFile(outputFile, "utf8", (err, data) => {
+      console.log(typeof data);
+      if (err) {
+        return res.status(500).send("Error reading output file");
+      }
+      res.send({ data: data });
+
+      // Clean up temporary files
+      // fs.unlink(inputFile, () => {});
+      // fs.unlink(outputFile, () => {});
+      console.log("test5");
+    });
+  });
+  console.log("done");
+});
+
+router.get("/song", (req, res) => {
+  const song = req.query.song;
+});
 
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
