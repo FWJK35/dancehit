@@ -102,34 +102,46 @@ const PoseDetection = (props) => {
     });
 
     // replace drawRectangle with drawImage, and get it to drawImages based on the type of item
-    // getQueue().forEach((item) => {
-    //   console.log(item);
-    //   drawRectangle(ctx, item.curX - getLen() / 2, item.curY - getLen() / 2, getLen(), getLen());
-    // });
+    getQueue().forEach((item) => {
+      // console.log(Math.abs(item.curY - item.finY));
+      // console.log(item.TimeToPoint);
+      drawRectangle(
+        ctx,
+        item.curX - getLen() / 2,
+        item.curY +
+          (Math.abs(item.curY - item.finY) * (getOffset() - item.TimeToPoint)) / getOffset() -
+          getLen() / 2,
+        getLen(),
+        getLen()
+      );
+    });
 
     if (getGameStarted()) {
       const songTime = getSongTime(); //* getFPS();
       const beatMap = getBeatMap();
       const offset = getOffset();
 
+      // console.log(beatMap);
+
       Object.keys(beatMap).forEach((timeStamp) => {
+        // console.log(parseFloat(timeStamp) + " " + (songTime - offset));
         if (parseFloat(timeStamp) < songTime - offset) {
           let actions = beatMap[timeStamp];
           delete beatMap[timeStamp];
 
           actions.forEach((action) => {
             if (action === -3) {
-              addToQueue("leftHandUp", window.innerHeight);
+              addToQueue("leftHandUp", window.innerHeight, offset);
             } else if (action === -2) {
-              addToQueue("leftHandWide", window.innerHeight);
+              addToQueue("leftHandWide", window.innerHeight, offset);
             } else if (action === -1) {
-              addToQueue("leftFoot", window.innerHeight);
+              addToQueue("leftFoot", window.innerHeight, offset);
             } else if (action === 1) {
-              addToQueue("rightFoot", window.innerHeight);
+              addToQueue("rightFoot", window.innerHeight, offset);
             } else if (action === 2) {
-              addToQueue("rightHandWide", window.innerHeight);
+              addToQueue("rightHandWide", window.innerHeight, offset);
             } else if (action === 3) {
-              addToQueue("rightHandUp", window.innerHeight);
+              addToQueue("rightHandUp", window.innerHeight, offset);
             }
           });
         }

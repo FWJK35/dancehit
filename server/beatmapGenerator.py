@@ -103,7 +103,11 @@ if __name__ == "__main__":
     # with open("Party in the USA.json", "w") as f:
     #  json.dump(beat_steps_3, f, indent=4)
     # print("Hashmaps saved as JSON files.")
+<<<<<<< Updated upstream
     # # Print the hashmap for the first music file.
+=======
+    # Print the hashmap for the first music file.
+>>>>>>> Stashed changes
     # print("Hashmap for the first music file:")
     # for timestamp, numbers in beat_steps_1.items():
     #     print(f"{timestamp:.2f}s -> {numbers}")

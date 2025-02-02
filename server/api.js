@@ -62,7 +62,7 @@ router.post("/process-audio", upload.single("audio"), (req, res) => {
   const outputFile = path.join("outputs", `${req.file.filename}.txt`);
   console.log(inputFile, outputFile);
 
-  const pythonProcess = spawn("python", [
+  const pythonProcess = spawn("python3", [
     path.join(__dirname, "bassDropBeatmapGen.py"),
     inputFile,
     outputFile,
