@@ -13,8 +13,8 @@ const ScoreKeeper = () => {
   }, []); // Runs once on mount
 
   return (
-    <div>
-      <h2>Score: {score}</h2>
+    <div className="scoreKeeperDiv">
+      <h2 className="press-start-2p-regular">Score: {score}</h2>
     </div>
   );
 };

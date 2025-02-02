@@ -23,7 +23,6 @@ import {
   getFPS,
   getGameScore,
 } from "../../game-logic";
-import "./PoseDetection.css";
 const bitMap = [];
 let arrows = {
   leftHandUp: {
@@ -291,8 +290,8 @@ const PoseDetection = (props) => {
 
   return (
     <div>
-      <Webcam ref={webcamRef} className="webcam" />
-      <canvas ref={canvasRef} className="game-display" />
+      <Webcam ref={webcamRef} className="cameraFrame" />
+      <canvas ref={canvasRef} className="mainCanvas" />
     </div>
   );
 };
