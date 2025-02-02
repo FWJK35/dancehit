@@ -172,6 +172,7 @@ h1 {
   pointer-events: none;
 }
 
-li {
-  font-size: 240px; /* Adjust the size as needed */
+.instructions-content {
+  max-width: 400px;
+  font-size: 200px;
 }

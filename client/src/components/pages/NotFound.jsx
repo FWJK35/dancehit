@@ -8,7 +8,8 @@ const NotFound = () => {
         <div class="instructions-content">
             <ol>
                 <li><span role="img">📸</span> Set up camera perpendicular to ground</li>
-                <li><span role="img">🧍</span> Ensure full body visibility</li>
+                <li><span role="img">🧍</span> Ensure full body visibility 
+                with arms out and legs apart</li>
                 <li><span role="img">👷</span> Clear dancing space</li>
                 <li><span role="img">🎵</span> Upload your song</li>
                 <li><span role="img">💃</span> Get ready to dance!</li>
