@@ -46,7 +46,7 @@ let lastCycleIn = {
   rightHandUp: false,
 };
 
-const rectLen = 100;
+const rectLen = 60;
 
 const getLen = () => {
   return rectLen;

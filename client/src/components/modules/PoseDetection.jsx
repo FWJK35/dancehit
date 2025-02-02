@@ -225,7 +225,7 @@ const PoseDetection = (props) => {
       }));
 
       drawKeypoints(flippedKeypoints, ctx, videoWidth);
-      drawSkeleton(flippedKeypoints, ctx, videoWidth);
+      // drawSkeleton(flippedKeypoints, ctx, videoWidth);
     }
   };
 
