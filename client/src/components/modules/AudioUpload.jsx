@@ -61,12 +61,6 @@ const AudioUpload = (props) => {
           Process Audio
         </button>
       </form>
-      {output && (
-        <div>
-          <h3 className="output press-start-2p-regular">Output:</h3>
-          <pre>{output}</pre>
-        </div>
-      )}
     </div>
   );
 };

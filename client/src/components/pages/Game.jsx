@@ -33,7 +33,7 @@ const Game = () => {
 
   return (
     <div>
-      <h1>Pocket Dance</h1>
+      <h1 className="headerText">Pocket Dance</h1>
       <PoseDetection canvasRef={canvasRef} webcamRef={webcamRef} />
       <button className="button" onClick={handleStartCalibration}>
         Start Calibration
